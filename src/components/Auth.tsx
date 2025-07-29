@@ -19,6 +19,10 @@ export default function Auth() {
 
     const navigate = useNavigate();
 
+    const isStrongPassword = (password: string): boolean => {
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+        return regex.test(password);
+    }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -26,6 +30,11 @@ export default function Auth() {
 
         const endpoint = isRegister ? 'signUp' : 'login';
         const payload = isRegister ? { name, email, password } : { email, password };
+
+        if (isRegister && !isStrongPassword(password)) {
+            setError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
+            return
+        }
 
         try {
             const res = await fetch(`http://localhost:5000/${endpoint}`, {
