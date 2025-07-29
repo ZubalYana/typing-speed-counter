@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { TextField, Button } from "@mui/material";
+import {
+    TextField,
+    Button,
+    IconButton,
+    InputAdornment
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
 
 export default function Auth() {
@@ -9,6 +15,7 @@ export default function Auth() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const navigate = useNavigate();
 
@@ -46,6 +53,9 @@ export default function Auth() {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword(prev => !prev);
+    };
     return (
         <div className="w-full h-screen xl:overflow-hidden flex justify-center items-center">
             <form
@@ -74,15 +84,28 @@ export default function Auth() {
                         fullWidth
                         margin="normal"
                     />
-
                     <TextField
                         label="Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         fullWidth
                         margin="normal"
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={togglePasswordVisibility}
+                                        edge="end"
+                                        aria-label="toggle password visibility"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
+
                 </div>
 
                 <div className="flex flex-col gap-2">
