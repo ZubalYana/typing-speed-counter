@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from "react-router-dom";
+import useAlertStore from "../stores/useAlertStore";
 
 export default function Auth() {
     const [isRegister, setIsRegister] = useState(true);
@@ -16,6 +17,7 @@ export default function Auth() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const { showAlert } = useAlertStore();
 
     const navigate = useNavigate();
 
@@ -32,7 +34,10 @@ export default function Auth() {
         const payload = isRegister ? { name, email, password } : { email, password };
 
         if (isRegister && !isStrongPassword(password)) {
-            setError('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.');
+            const message = 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.';
+            setError(message);
+            showAlert(message, 'error');
+
             return
         }
 
@@ -117,11 +122,20 @@ export default function Auth() {
 
                 </div>
 
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 mt-1">
                     {error && <p className="text-red-500 text-sm">{error}</p>}
                     {success && <p className="text-green-500 text-sm">{success}</p>}
 
-                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        fullWidth
+                        sx={{
+                            marginTop: '20px',
+                            backgroundColor: '#10B981'
+                        }}
+                    >
                         {isRegister ? 'Register' : 'Log in'}
                     </Button>
 
@@ -129,7 +143,7 @@ export default function Auth() {
                         {isRegister ? 'Already have an account?' : "Don't have an account?"}
                         <span
                             onClick={() => setIsRegister(!isRegister)}
-                            className="text-blue-500 cursor-pointer ml-1 hover:underline"
+                            className="text-emerald-500 cursor-pointer ml-1 hover:underline"
                         >
                             {isRegister ? 'Log in' : 'Register'}
                         </span>
