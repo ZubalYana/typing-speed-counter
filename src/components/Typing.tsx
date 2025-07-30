@@ -44,21 +44,27 @@ export default function TypingTest() {
         if (timeLeft <= 0) return;
 
         const newValue = e.target.value;
+        const prevLength = userInput.length;
+        const newLength = newValue.length;
 
-        if (newValue.length < userInput.length) {
-            setUserInput(newValue);
+        if (newLength < prevLength) {
+            const lastTyped = userInput[prevLength - 1];
+            const correctChar = text[prevLength - 1];
+
+            if (lastTyped !== correctChar) {
+                setUserInput(newValue);
+            }
             return;
         }
 
         const nextCharIndex = userInput.length;
-        const nextChar = text[nextCharIndex];
+        const expectedChar = text[nextCharIndex];
         const typedChar = newValue[nextCharIndex];
 
-        if (typedChar === nextChar) {
+        if (typedChar === expectedChar) {
             setUserInput(newValue);
         }
-    };
-
+    }
 
     const restart = () => {
         setUserInput("");
@@ -104,19 +110,21 @@ export default function TypingTest() {
                 }}
             >
                 {text.split("").map((char, i) => {
-                    let color;
+                    let style: React.CSSProperties = {};
+
                     if (i < userInput.length) {
-                        color = userInput[i] === char ? "#4caf50" : "#f44336";
+                        style.color = userInput[i] === char ? "#4caf50" : "#f44336"; // green/red
                     } else if (i === userInput.length) {
-                        color = "#000";
+                        style.color = "#000";
+                        style.fontWeight = "bold";
+                        style.textDecoration = "underline";
                     } else {
-                        color = "#888";
+                        style.color = "#888";
                     }
 
-                    return (
-                        <span key={i} style={{ color }}>{char}</span>
-                    );
+                    return <span key={i} style={style}>{char}</span>;
                 })}
+
             </Box>
 
             <TextField
@@ -129,7 +137,24 @@ export default function TypingTest() {
                 disabled={timeLeft === 0}
                 placeholder="Start typing here..."
                 sx={{ mb: 2 }}
+                inputProps={{
+                    spellCheck: false,
+                    autoComplete: 'off',
+                    onPaste: (e) => e.preventDefault(),
+                    onCut: (e) => e.preventDefault(),
+                    onSelect: (e) => {
+                        const input = e.target as HTMLInputElement;
+                        const pos = userInput.length;
+                        input.setSelectionRange(pos, pos);
+                    },
+                    onKeyDown: (e) => {
+                        if (['ArrowLeft', 'ArrowUp', 'ArrowRight', 'ArrowDown', 'Home', 'End'].includes(e.key)) {
+                            e.preventDefault();
+                        }
+                    }
+                }}
             />
+
 
             <Button onClick={restart} variant="contained" color="primary">
                 Restart
