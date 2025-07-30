@@ -37,7 +37,7 @@ export default function TypingTest() {
 
         const wordsTyped = userInput.trim().split(/\s+/).length;
         setWpm(Math.round((wordsTyped / (60 - timeLeft)) * 60 || 0));
-    }, [userInput, timeLeft]);
+    }, [userInput, timeLeft, text]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!isRunning) setIsRunning(true);
