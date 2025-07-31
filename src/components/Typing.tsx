@@ -1,145 +1,149 @@
-import { useEffect, useState, useRef } from "react";
-import { Box, Button, Typography, TextField, Stack } from "@mui/material";
-import axios from 'axios';
+import { useState, useEffect, useRef } from "react";
+import type { ChangeEvent, KeyboardEvent } from "react";
+import {
+    Box,
+    Button,
+    Typography,
+    TextField,
+    Stack,
+} from "@mui/material";
+import axios from "axios";
 
 export default function TypingTest() {
-    const [text, setText] = useState('');
-    const [fullUserInput, setFullUserInput] = useState('');
-    const [timeLeft, setTimeLeft] = useState(60);
-    const [isRunning, setIsRunning] = useState(false);
-    const [wpm, setWpm] = useState(0);
-    const [accuracy, setAccuracy] = useState(0);
-    const [errors, setErrors] = useState(0);
-    const inputRef = useRef<HTMLInputElement>(null);
+    const [text, setText] = useState<string>("");
+    const [userInput, setUserInput] = useState<string>("");
+    const [mistakes, setMistakes] = useState<number>(0);
+    const [started, setStarted] = useState<boolean>(false);
+    const [isFinished, setIsFinished] = useState<boolean>(false);
+    const [firstErrorIndex, setFirstErrorIndex] = useState<number | null>(null);
+
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
+    const fetchText = () => {
+        axios.get("http://localhost:5000/random-text").then((res) => {
+            setText(res.data.text);
+            setUserInput("");
+            setMistakes(0);
+            setStarted(false);
+            setIsFinished(false);
+            setFirstErrorIndex(null);
+        });
+    };
 
     useEffect(() => {
-        axios.get('http://localhost:5000/random-text')
-            .then(res => setText(res.data.text))
-            .catch(err => console.error(err));
+        fetchText();
     }, []);
 
     useEffect(() => {
-        if (!isRunning || timeLeft <= 0) return;
+        if (started && userInput.length === text.length) {
+            setIsFinished(true);
+        }
+    }, [userInput, text, started]);
 
-        const timer = setInterval(() => {
-            setTimeLeft(prev => prev - 1);
-        }, 1000);
+    const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
+        if (isFinished) return;
 
-        return () => clearInterval(timer);
-    }, [isRunning, timeLeft]);
+        const val = e.target.value;
 
-    useEffect(() => {
-        const correctChars = fullUserInput
-            .split("")
-            .filter((char, i) => char === text[i])
-            .length;
-        const totalTyped = fullUserInput.length;
-        const errCount = totalTyped - correctChars;
+        if (val.length < userInput.length) {
+            return;
+        }
 
-        setErrors(errCount > 0 ? errCount : 0);
-        setAccuracy(totalTyped > 0 ? Math.round((correctChars / totalTyped) * 100) : 0);
-        setWpm(timeLeft < 60 ? Math.round((fullUserInput.trim().split(/\s+/).length / (60 - timeLeft)) * 60) : 0);
-    }, [fullUserInput, timeLeft, text]);
+        if (val.length > userInput.length + 1) {
+            return;
+        }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!isRunning) setIsRunning(true);
-        if (timeLeft <= 0) return;
+        if (firstErrorIndex === null) {
+            const index = userInput.length;
+            const typedChar = val[index];
+            const expectedChar = text[index];
 
-        const newValue = e.target.value;
-
-        if (newValue.length > fullUserInput.length) {
-            const nextChar = newValue[newValue.length - 1];
-            setFullUserInput(prev => prev + nextChar);
+            if (typedChar === expectedChar) {
+                setUserInput((prev) => prev + typedChar);
+            } else {
+                setMistakes((prev) => prev + 1);
+                setFirstErrorIndex(index);
+            }
+        } else {
+            if (val.length === firstErrorIndex + 1) {
+                const typedChar = val[firstErrorIndex];
+                const expectedChar = text[firstErrorIndex];
+                if (typedChar === expectedChar) {
+                    setFirstErrorIndex(null);
+                    setUserInput(val);
+                } else {
+                }
+            }
         }
     };
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        const forbidden = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'];
-        if (forbidden.includes(e.key)) {
+    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+        if (
+            e.key === "Backspace" ||
+            e.key === "Delete" ||
+            e.key === "ArrowLeft" ||
+            e.key === "ArrowRight" ||
+            e.key === "Home" ||
+            e.key === "End"
+        ) {
             e.preventDefault();
         }
     };
 
-    const restart = () => {
-        setIsRunning(false);
-        setTimeLeft(60);
-        setFullUserInput('');
-        setWpm(0);
-        setAccuracy(0);
-        setErrors(0);
+    const resetTest = () => {
+        fetchText();
         inputRef.current?.focus();
     };
 
+    const renderText = () => {
+        return text.split("").map((char, i) => {
+            let color = "black";
+
+            if (i < userInput.length) {
+                color = "green";
+            }
+
+            if (firstErrorIndex !== null && i === firstErrorIndex) {
+                color = "red";
+            }
+
+            return (
+                <span key={i} style={{ color, userSelect: "none" }}>
+                    {char}
+                </span>
+            );
+        });
+    };
+
     return (
-        <Box sx={{ maxWidth: "800px", mx: "auto", p: 4 }}>
-            <Typography variant="h4" gutterBottom>Typing Speed Test</Typography>
+        <Box p={4}>
+            <Typography variant="h5" gutterBottom>
+                Typing Test
+            </Typography>
 
-            <Stack direction="row" spacing={3} mb={2}>
-                <Typography>⏳ {timeLeft}s</Typography>
-                <Typography>⚡ WPM: {wpm}</Typography>
-                <Typography>🎯 Accuracy: {accuracy}%</Typography>
-                <Typography>❌ Errors: {errors}</Typography>
-            </Stack>
-
-            <Box
-                sx={{
-                    p: 2,
-                    border: "1px solid #ccc",
-                    borderRadius: "8px",
-                    mb: 2,
-                    minHeight: "120px",
-                    fontSize: "20px",
-                    lineHeight: "1.6",
-                    fontFamily: "monospace",
-                    whiteSpace: "pre-wrap",
-                    backgroundColor: "#f9f9f9"
-                }}
-            >
-                {text.split("").map((char, i) => {
-                    const typedChar = fullUserInput[i];
-                    let style: React.CSSProperties = { color: "#888" };
-
-                    if (typedChar != null) {
-                        style.color = typedChar === char ? "#4caf50" : "#f44336";
-                    }
-
-                    if (i === fullUserInput.length) {
-                        style.fontWeight = "bold";
-                        style.textDecoration = "underline";
-                        style.color = "#000";
-                    }
-
-                    return <span key={i} style={style}>{char}</span>;
-                })}
+            <Box mb={2} fontSize="1.2rem" sx={{ wordWrap: "break-word" }}>
+                {renderText()}
             </Box>
 
             <TextField
-                fullWidth
                 inputRef={inputRef}
-                multiline
-                minRows={3}
-                value={fullUserInput}
-                onChange={handleChange}
+                variant="outlined"
+                fullWidth
+                placeholder="Start typing..."
+                onChange={handleInput}
                 onKeyDown={handleKeyDown}
-                disabled={timeLeft === 0}
-                placeholder="Start typing here..."
-                sx={{ mb: 2 }}
-                inputProps={{
-                    spellCheck: false,
-                    autoComplete: 'off',
-                    onPaste: (e) => e.preventDefault(),
-                    onCut: (e) => e.preventDefault(),
-                    onSelect: (e) => {
-                        const input = e.target as HTMLInputElement;
-                        const pos = fullUserInput.length;
-                        input.setSelectionRange(pos, pos);
-                    }
-                }}
+                value={userInput}
+                disabled={isFinished}
+                onFocus={() => setStarted(true)}
+                autoFocus
             />
 
-            <Button onClick={restart} variant="contained" color="primary">
-                Restart
-            </Button>
+            <Stack direction="row" spacing={2} mt={2}>
+                <Typography>Mistakes: {mistakes}</Typography>
+                <Button variant="outlined" onClick={resetTest}>
+                    Restart
+                </Button>
+            </Stack>
         </Box>
     );
 }
