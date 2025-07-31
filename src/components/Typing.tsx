@@ -16,8 +16,10 @@ export default function TypingTest() {
     const [started, setStarted] = useState<boolean>(false);
     const [isFinished, setIsFinished] = useState<boolean>(false);
     const [firstErrorIndex, setFirstErrorIndex] = useState<number | null>(null);
+    const [timeElapsed, setTimeElapsed] = useState<number>(0);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
     const fetchText = () => {
         axios.get("http://localhost:5000/random-text").then((res) => {
@@ -27,12 +29,32 @@ export default function TypingTest() {
             setStarted(false);
             setIsFinished(false);
             setFirstErrorIndex(null);
+            setTimeElapsed(0);
+            if (timerRef.current) {
+                clearInterval(timerRef.current);
+                timerRef.current = null;
+            }
         });
     };
 
     useEffect(() => {
         fetchText();
     }, []);
+
+    useEffect(() => {
+        if (started && !timerRef.current && !isFinished) {
+            timerRef.current = setInterval(() => {
+                setTimeElapsed((t) => t + 1);
+            }, 1000)
+        }
+    }, [started, isFinished])
+
+    useEffect(() => {
+        if (isFinished && timerRef.current) {
+            clearInterval(timerRef.current);
+            timerRef.current = null;
+        }
+    }, [isFinished]);
 
     useEffect(() => {
         if (started && userInput.length === text.length) {
@@ -115,6 +137,14 @@ export default function TypingTest() {
         });
     };
 
+    const totalTypedChars = userInput.length + (firstErrorIndex !== null ? 1 : 0);
+    const correctChars = userInput.length;
+    const accuracy =
+        totalTypedChars > 0 ? (correctChars / totalTypedChars) * 100 : 100;
+
+    const timeMinutes = timeElapsed / 60 || 1;
+    const wpm = Math.round((correctChars / 5) / timeMinutes);
+
     return (
         <Box p={4}>
             <Typography variant="h5" gutterBottom>
@@ -144,6 +174,16 @@ export default function TypingTest() {
                     Restart
                 </Button>
             </Stack>
+
+            {isFinished && (
+                <Box mt={4}>
+                    <Typography variant="h6">Statistics</Typography>
+                    <Typography>WPM: {wpm}</Typography>
+                    <Typography>Accuracy: {accuracy.toFixed(2)}%</Typography>
+                    <Typography>Total Errors: {mistakes}</Typography>
+                    <Typography>Time elapsed: {timeElapsed} seconds</Typography>
+                </Box>
+            )}
         </Box>
     );
 }
