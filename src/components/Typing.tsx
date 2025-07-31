@@ -137,10 +137,9 @@ export default function TypingTest() {
         });
     };
 
-    const totalTypedChars = userInput.length + (firstErrorIndex !== null ? 1 : 0);
     const correctChars = userInput.length;
-    const accuracy =
-        totalTypedChars > 0 ? (correctChars / totalTypedChars) * 100 : 100;
+    const totalAttemps = correctChars + mistakes;
+    const accuracy = totalAttemps > 0 ? (correctChars / totalAttemps) * 100 : 100;
 
     const timeMinutes = timeElapsed / 60 || 1;
     const wpm = Math.round((correctChars / 5) / timeMinutes);
