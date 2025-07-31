@@ -6,7 +6,10 @@ import {
     Typography,
     TextField,
     Stack,
+    Select,
 } from "@mui/material";
+import type { SelectChangeEvent } from '@mui/material';
+import { MenuItem } from '@mui/material';
 import axios from "axios";
 
 export default function TypingTest() {
@@ -17,6 +20,8 @@ export default function TypingTest() {
     const [isFinished, setIsFinished] = useState<boolean>(false);
     const [firstErrorIndex, setFirstErrorIndex] = useState<number | null>(null);
     const [timeElapsed, setTimeElapsed] = useState<number>(0);
+    const [testingLanguage, setTestingLanguage] = useState<string>("English");
+    const testingLanguagesOptions = ['English', 'Українська']
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -137,6 +142,10 @@ export default function TypingTest() {
         });
     };
 
+    const handleChange = (event: SelectChangeEvent) => {
+        setTestingLanguage(event.target.value);
+    };
+
     const correctChars = userInput.length;
     const totalAttemps = correctChars + mistakes;
     const accuracy = totalAttemps > 0 ? (correctChars / totalAttemps) * 100 : 100;
@@ -150,7 +159,38 @@ export default function TypingTest() {
                 Typing Speed Test
             </h5>
 
-            <div className="w-[90%] my-4 wrap-break-word bg-[#fff] rounded-xl p-4 text-[20px]">
+            <div className="w-[90%] flex">
+                <div className="flex items-center">
+                    <h5>Typing language:</h5>
+                    <Select
+                        value={testingLanguage}
+                        onChange={handleChange}
+                        variant="outlined"
+                        sx={{
+                            border: 'none',
+                            boxShadow: 'none',
+                            '& fieldset': { border: 'none' },
+                            left: '-5px',
+                            fontWeight: 600
+                        }}
+                    >
+                        {testingLanguagesOptions.map((lang) => (
+                            <MenuItem
+                                key={lang}
+                                value={lang}
+                                sx={{
+                                    textDecoration: 'none',
+
+                                }}
+                            >
+                                {lang}
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </div>
+            </div>
+
+            <div className="w-[90%] mb-4 wrap-break-word bg-[#fff] rounded-xl p-4 text-[20px]">
                 {renderText()}
             </div>
 
