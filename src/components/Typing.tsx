@@ -145,27 +145,29 @@ export default function TypingTest() {
     const wpm = Math.round((correctChars / 5) / timeMinutes);
 
     return (
-        <Box p={4}>
-            <Typography variant="h5" gutterBottom>
-                Typing Test
-            </Typography>
+        <div className="p-4 pt-8 flex flex-col items-center w-full h-screen text-[#333]">
+            <h5 className="text-[32px] font-semibold">
+                Typing Speed Test
+            </h5>
 
-            <Box mb={2} fontSize="1.2rem" sx={{ wordWrap: "break-word" }}>
+            <div className="w-[90%] my-4 wrap-break-word bg-[#fff] rounded-xl p-4 text-[20px]">
                 {renderText()}
-            </Box>
+            </div>
 
-            <TextField
-                inputRef={inputRef}
-                variant="outlined"
-                fullWidth
-                placeholder="Start typing..."
-                onChange={handleInput}
-                onKeyDown={handleKeyDown}
-                value={userInput}
-                disabled={isFinished}
-                onFocus={() => setStarted(true)}
-                autoFocus
-            />
+            <div className="w-[90%]">
+                <TextField
+                    inputRef={inputRef}
+                    variant="outlined"
+                    fullWidth
+                    placeholder="Start typing..."
+                    onChange={handleInput}
+                    onKeyDown={handleKeyDown}
+                    value={userInput}
+                    disabled={isFinished}
+                    onFocus={() => setStarted(true)}
+                    autoFocus
+                />
+            </div>
 
             <Stack direction="row" spacing={2} mt={2}>
                 <Typography>Mistakes: {mistakes}</Typography>
@@ -183,6 +185,6 @@ export default function TypingTest() {
                     <Typography>Time elapsed: {timeElapsed} seconds</Typography>
                 </Box>
             )}
-        </Box>
+        </div>
     );
 }

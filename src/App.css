@@ -1,0 +1,23 @@
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: MuseoModerno;
+}
+
+div,
+span,
+a,
+li,
+ul,
+ol,
+link,
+p {
+    font-family: Montserrat Alternates;
+}
+
+body {
+    background-color: #f5f5f5;
+}

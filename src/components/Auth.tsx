@@ -74,7 +74,7 @@ export default function Auth() {
         <div className="w-full h-screen xl:overflow-hidden flex justify-center items-center">
             <form
                 onSubmit={handleSubmit}
-                className="w-[500px] rounded-xl bg-white shadow-2xl p-4 flex flex-col justify-between"
+                className="w-[500px] rounded-xl bg-white shadow-2xl p-6 flex flex-col justify-between"
             >
                 <div>
                     <h3 className="text-[24px] font-bold mb-4">
