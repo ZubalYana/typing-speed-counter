@@ -25,6 +25,7 @@ export default function TypingTest() {
     const testingLanguagesOptions = ['English', 'Українська']
     const [duration, setDuration] = useState<number>(30);
 
+    const timeRemaining = Math.max(0, duration - timeElapsed);
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -240,7 +241,9 @@ export default function TypingTest() {
                     autoFocus
                 />
             </div>
-
+            {!isFinished && (
+                <h3>{timeRemaining}</h3>
+            )}
             <Stack direction="row" spacing={2} mt={2}>
                 <Typography>Mistakes: {mistakes}</Typography>
                 <Button variant="outlined" onClick={resetTest}>
