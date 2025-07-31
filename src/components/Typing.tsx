@@ -69,6 +69,12 @@ export default function TypingTest() {
         }
     }, [userInput, text, started]);
 
+    useEffect(() => {
+        if (started && !isFinished && timeElapsed >= duration) {
+            setIsFinished(true);
+        }
+    }, [timeElapsed, duration, started, isFinished])
+
     const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
         if (isFinished) return;
 
