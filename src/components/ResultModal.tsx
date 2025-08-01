@@ -1,6 +1,13 @@
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
+import {
+    Zap,
+    Type,
+    CheckCircle,
+    AlertTriangle,
+    Clock
+} from "lucide-react";
 
 type ResultModalProps = {
     open: boolean;
@@ -57,14 +64,41 @@ export default function ResultModal({
                                 Nice results!
                             </h6>
                             <p className="font-normal text-[14px] mb-3">We know, you can even better!</p>
-                            <div className="space-y-2">
-                                <p>WPM: {wpm}</p>
-                                <p>CPM: {cpm}</p>
-                                <p>
-                                    Accuracy: {accuracy.toFixed(2)}%
-                                </p>
-                                <p>Total Errors: {mistakes}</p>
-                                <p>Time: {timeElapsed}s</p>
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2">
+                                    <Zap className="w-5 h-5 text-[#10B981]" />
+                                    <span className="text-sm">
+                                        WPM: <span className="font-semibold">{wpm}</span>
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <Type className="w-5 h-5 text-[#10B981]" />
+                                    <span className="text-sm">
+                                        CPM: <span className="font-semibold">{cpm}</span>
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle className="w-5 h-5 text-[#10B981]" />
+                                    <span className="text-sm">
+                                        Accuracy: <span className="font-semibold">{accuracy.toFixed(2)}%</span>
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <AlertTriangle className="w-5 h-5 text-[#10B981]" />
+                                    <span className="text-sm">
+                                        Total Errors: <span className="font-semibold">{mistakes}</span>
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <Clock className="w-5 h-5 text-[#10B981]" />
+                                    <span className="text-sm">
+                                        Time: <span className="font-semibold">{timeElapsed}s</span>
+                                    </span>
+                                </div>
                             </div>
                             <div className="absolute top-4 right-4 cursor-pointer" onClick={onClose}>
                                 <X />
