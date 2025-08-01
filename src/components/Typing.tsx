@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import type { ChangeEvent, KeyboardEvent } from "react";
+import type { KeyboardEvent } from "react";
 import {
     Box,
     Button,
     Typography,
-    TextField,
     Stack,
     Select,
 } from "@mui/material";
@@ -12,6 +11,7 @@ import type { SelectChangeEvent } from '@mui/material';
 import { MenuItem } from '@mui/material';
 import axios from "axios";
 import ButtonGroup from "@mui/material/ButtonGroup";
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
 
 export default function TypingTest() {
     const [text, setText] = useState<string>("");
@@ -24,6 +24,7 @@ export default function TypingTest() {
     const [testingLanguage, setTestingLanguage] = useState<string>("English");
     const testingLanguagesOptions = ['English', 'Українська']
     const [duration, setDuration] = useState<number>(30);
+    const [isRotating, setIsRotating] = useState<boolean>(false);
 
     const timeRemaining = Math.max(0, duration - timeElapsed);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -77,8 +78,13 @@ export default function TypingTest() {
     }, [timeElapsed, duration, started, isFinished])
 
     const resetTest = () => {
+        setIsRotating(true);
         fetchText();
         inputRef.current?.focus();
+
+        setTimeout(() => {
+            setIsRotating(false);
+        }, 600);
     };
 
     const renderText = () => {
@@ -254,16 +260,23 @@ export default function TypingTest() {
                 >
                 </div>
             </div>
+            <div className="w-[90%] flex items-center">
+                <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={resetTest}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') resetTest(); }}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <RestartAltIcon className={isRotating ? "rotate-once" : ""} sx={{ fontSize: 28 }} />
+                </div>
 
-            {!isFinished && (
-                <h3>{timeRemaining}</h3>
-            )}
-            <Stack direction="row" spacing={2} mt={2}>
-                <Typography>Mistakes: {mistakes}</Typography>
-                <Button variant="outlined" onClick={resetTest}>
-                    Restart
-                </Button>
-            </Stack>
+
+                {!isFinished && (
+                    <h3 className="ml-[2px]">{timeRemaining}s</h3>
+                )}
+            </div>
+
 
             {isFinished && (
                 <Box mt={4}>
