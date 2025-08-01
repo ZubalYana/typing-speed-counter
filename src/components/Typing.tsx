@@ -229,11 +229,8 @@ export default function TypingTest() {
 
             </div>
 
-            <div className="w-[90%] mb-4 wrap-break-word bg-[#fff] rounded-xl p-4 text-[20px]">
+            <div className="w-[90%] mb-4 wrap-break-word bg-[#fff] rounded-xl p-4 text-[20px] relative">
                 {renderText()}
-            </div>
-
-            <div className="w-[90%]">
                 <div
                     role="textbox"
                     aria-label="typing input"
@@ -244,21 +241,21 @@ export default function TypingTest() {
                         outline: "none",
                         width: "100%",
                         padding: "8px 12px",
-                        marginTop: 8,
-                        border: "1px solid #ccc",
+                        border: "none",
                         borderRadius: 6,
                         fontSize: 18,
                         fontFamily: "monospace",
-                        background: "#f9f9f9",
-                        position: "relative",
+                        background: "rgba(0,0,0,0)",
+                        position: "absolute",
                         minHeight: 40,
                         userSelect: "none",
                         cursor: "text",
+                        inset: 0,
                     }}
                 >
                 </div>
-
             </div>
+
             {!isFinished && (
                 <h3>{timeRemaining}</h3>
             )}
