@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { KeyboardEvent } from "react";
 import {
-    Box,
     Button,
-    Typography,
     Stack,
     Select,
 } from "@mui/material";
@@ -12,6 +10,7 @@ import { MenuItem } from '@mui/material';
 import axios from "axios";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import ResultModal from "./ResultModal";
 
 export default function TypingTest() {
     const [text, setText] = useState<string>("");
@@ -25,6 +24,7 @@ export default function TypingTest() {
     const testingLanguagesOptions = ['English', 'Українська']
     const [duration, setDuration] = useState<number>(30);
     const [isRotating, setIsRotating] = useState<boolean>(false);
+    const [showResultsModal, setShowResultsModal] = useState<boolean>(false);
 
     const timeRemaining = Math.max(0, duration - timeElapsed);
     const inputRef = useRef<HTMLInputElement | null>(null);
@@ -70,6 +70,12 @@ export default function TypingTest() {
             setIsFinished(true);
         }
     }, [userInput, text, started]);
+
+    useEffect(() => {
+        if (isFinished) {
+            setShowResultsModal(true);
+        }
+    }, [isFinished]);
 
     useEffect(() => {
         if (started && !isFinished && timeElapsed >= duration) {
@@ -166,13 +172,17 @@ export default function TypingTest() {
         }
     };
 
-
     const correctChars = userInput.length;
-    const totalAttemps = correctChars + mistakes;
-    const accuracy = totalAttemps > 0 ? (correctChars / totalAttemps) * 100 : 100;
+    const totalAttempts = correctChars + mistakes;
+    const accuracy = totalAttempts > 0 ? (correctChars / totalAttempts) * 100 : 100;
 
-    const timeMinutes = timeElapsed / 60 || 1;
-    const wpm = Math.round((correctChars / 5) / timeMinutes);
+    const timeUsedSeconds = isFinished && userInput.length === text.length
+        ? timeElapsed
+        : Math.min(timeElapsed, duration);
+    const timeUsedMinutes = Math.max(1 / 60, timeUsedSeconds / 60);
+
+    const cpm = Math.round(correctChars / timeUsedMinutes);
+    const wpm = Math.round(cpm / 5);
 
     return (
         <div className="p-4 pt-8 flex flex-col items-center w-full h-screen text-[#333]">
@@ -277,16 +287,16 @@ export default function TypingTest() {
                 )}
             </div>
 
+            <ResultModal
+                open={showResultsModal}
+                onClose={() => setShowResultsModal(false)}
+                wpm={wpm}
+                cpm={cpm}
+                accuracy={accuracy}
+                mistakes={mistakes}
+                timeElapsed={timeElapsed}
+            />
 
-            {isFinished && (
-                <Box mt={4}>
-                    <Typography variant="h6">Statistics</Typography>
-                    <Typography>WPM: {wpm}</Typography>
-                    <Typography>Accuracy: {accuracy.toFixed(2)}%</Typography>
-                    <Typography>Total Errors: {mistakes}</Typography>
-                    <Typography>Time elapsed: {timeElapsed} seconds</Typography>
-                </Box>
-            )}
         </div>
     );
 }
