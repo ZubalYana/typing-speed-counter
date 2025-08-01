@@ -76,56 +76,6 @@ export default function TypingTest() {
         }
     }, [timeElapsed, duration, started, isFinished])
 
-    const handleInput = (e: ChangeEvent<HTMLInputElement>) => {
-        if (isFinished) return;
-
-        const val = e.target.value;
-
-        if (val.length < userInput.length) {
-            return;
-        }
-
-        if (val.length > userInput.length + 1) {
-            return;
-        }
-
-        if (firstErrorIndex === null) {
-            const index = userInput.length;
-            const typedChar = val[index];
-            const expectedChar = text[index];
-
-            if (typedChar === expectedChar) {
-                setUserInput((prev) => prev + typedChar);
-            } else {
-                setMistakes((prev) => prev + 1);
-                setFirstErrorIndex(index);
-            }
-        } else {
-            if (val.length === firstErrorIndex + 1) {
-                const typedChar = val[firstErrorIndex];
-                const expectedChar = text[firstErrorIndex];
-                if (typedChar === expectedChar) {
-                    setFirstErrorIndex(null);
-                    setUserInput(val);
-                } else {
-                }
-            }
-        }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-        if (
-            e.key === "Backspace" ||
-            e.key === "Delete" ||
-            e.key === "ArrowLeft" ||
-            e.key === "ArrowRight" ||
-            e.key === "Home" ||
-            e.key === "End"
-        ) {
-            e.preventDefault();
-        }
-    };
-
     const resetTest = () => {
         fetchText();
         inputRef.current?.focus();
@@ -154,6 +104,62 @@ export default function TypingTest() {
     const handleChange = (event: SelectChangeEvent) => {
         setTestingLanguage(event.target.value);
     };
+
+    const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (isFinished) return;
+
+        if (!started && e.key.length === 1) {
+            setStarted(true);
+        }
+
+        //look if it'll be needed to block backspace in future
+        const blocked = [
+            "ArrowLeft",
+            "ArrowRight",
+            "Home",
+            "End",
+            "Delete",
+        ];
+        if (blocked.includes(e.key)) {
+            e.preventDefault();
+            return;
+        }
+
+        if (e.key === "Backspace") {
+            e.preventDefault();
+            if (firstErrorIndex === null) {
+                setUserInput((prev) => prev.slice(0, -1));
+            }
+            return;
+        }
+
+        if (e.key.length !== 1) {
+            return;
+        }
+
+        const index = userInput.length;
+        const typedChar = e.key;
+        const expectedChar = text[index];
+
+        if (firstErrorIndex === null) {
+            if (typedChar === expectedChar) {
+                setUserInput((prev) => prev + typedChar);
+            } else {
+                setMistakes((prev) => prev + 1);
+                setFirstErrorIndex(index);
+            }
+        } else {
+            if (index === firstErrorIndex) {
+                if (typedChar === text[firstErrorIndex]) {
+                    setFirstErrorIndex(null);
+                    setUserInput((prev) => prev + typedChar);
+                } else {
+                    //still wrong, give feedback or ignore
+                }
+            }
+        }
+    };
+
 
     const correctChars = userInput.length;
     const totalAttemps = correctChars + mistakes;
@@ -228,18 +234,30 @@ export default function TypingTest() {
             </div>
 
             <div className="w-[90%]">
-                <TextField
-                    inputRef={inputRef}
-                    variant="outlined"
-                    fullWidth
-                    placeholder="Start typing..."
-                    onChange={handleInput}
-                    onKeyDown={handleKeyDown}
-                    value={userInput}
-                    disabled={isFinished}
+                <div
+                    role="textbox"
+                    aria-label="typing input"
+                    tabIndex={0}
+                    onKeyDown={handleKey}
                     onFocus={() => setStarted(true)}
-                    autoFocus
-                />
+                    style={{
+                        outline: "none",
+                        width: "100%",
+                        padding: "8px 12px",
+                        marginTop: 8,
+                        border: "1px solid #ccc",
+                        borderRadius: 6,
+                        fontSize: 18,
+                        fontFamily: "monospace",
+                        background: "#f9f9f9",
+                        position: "relative",
+                        minHeight: 40,
+                        userSelect: "none",
+                        cursor: "text",
+                    }}
+                >
+                </div>
+
             </div>
             {!isFinished && (
                 <h3>{timeRemaining}</h3>
