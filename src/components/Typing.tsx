@@ -236,7 +236,6 @@ export default function TypingTest() {
                     aria-label="typing input"
                     tabIndex={0}
                     onKeyDown={handleKey}
-                    onFocus={() => setStarted(true)}
                     style={{
                         outline: "none",
                         width: "100%",
