@@ -20,7 +20,9 @@ export default function TypingTest() {
     const [isFinished, setIsFinished] = useState<boolean>(false);
     const [firstErrorIndex, setFirstErrorIndex] = useState<number | null>(null);
     const [timeElapsed, setTimeElapsed] = useState<number>(0);
-    const [testingLanguage, setTestingLanguage] = useState<string>("English");
+    const [testingLanguage, setTestingLanguage] = useState<string>(() => {
+        return localStorage.getItem("typingLanguage") || "English";
+    });
     const testingLanguagesOptions = ['English', 'Ukrainian']
     const [duration, setDuration] = useState<number>(30);
     const [isRotating, setIsRotating] = useState<boolean>(false);
@@ -49,10 +51,6 @@ export default function TypingTest() {
     useEffect(() => {
         fetchText(testingLanguage);
     }, [testingLanguage]);
-
-    useEffect(() => {
-        fetchText(testingLanguage);
-    }, []);
 
     useEffect(() => {
         if (started && !timerRef.current && !isFinished) {
@@ -118,8 +116,11 @@ export default function TypingTest() {
     };
 
     const handleChange = (event: SelectChangeEvent) => {
-        setTestingLanguage(event.target.value);
+        const lang = event.target.value;
+        setTestingLanguage(lang);
+        localStorage.setItem("typingLanguage", lang);
     };
+
 
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
