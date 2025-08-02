@@ -59,6 +59,10 @@ export default function Auth() {
 
             setSuccess(`${isRegister ? 'Registered' : 'Logged in'} successfully!`);
             localStorage.setItem('token', data.token);
+            const userName = isRegister ? name : data.user?.name || '';
+            if (userName) {
+                localStorage.setItem('name', userName);
+            }
             console.log('User:', data.user);
             navigate('/');
         } catch (err) {
