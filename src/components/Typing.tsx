@@ -190,7 +190,7 @@ export default function TypingTest() {
     const wpm = Math.round(cpm / 5);
 
     return (
-        <div className="p-4 pt-8 flex flex-col items-center w-full h-screen text-[#333]">
+        <div className="p-4 pt-8 flex flex-col items-center w-full text-[#333]">
             <h5 className="text-[32px] font-semibold">
                 Typing Speed Test
             </h5>

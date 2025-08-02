@@ -143,7 +143,7 @@ export default function Auth() {
                         {isRegister ? 'Already have an account?' : "Don't have an account?"}
                         <span
                             onClick={() => setIsRegister(!isRegister)}
-                            className="text-emerald-500 cursor-pointer ml-1 hover:underline"
+                            className="text-[#10B981] cursor-pointer ml-1 hover:underline"
                         >
                             {isRegister ? 'Log in' : 'Register'}
                         </span>
