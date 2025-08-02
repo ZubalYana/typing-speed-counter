@@ -21,7 +21,7 @@ export default function TypingTest() {
     const [firstErrorIndex, setFirstErrorIndex] = useState<number | null>(null);
     const [timeElapsed, setTimeElapsed] = useState<number>(0);
     const [testingLanguage, setTestingLanguage] = useState<string>("English");
-    const testingLanguagesOptions = ['English', 'Українська']
+    const testingLanguagesOptions = ['English', 'Ukrainian']
     const [duration, setDuration] = useState<number>(30);
     const [isRotating, setIsRotating] = useState<boolean>(false);
     const [showResultsModal, setShowResultsModal] = useState<boolean>(false);
@@ -30,8 +30,8 @@ export default function TypingTest() {
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-    const fetchText = () => {
-        axios.get("http://localhost:5000/random-text").then((res) => {
+    const fetchText = (language: string) => {
+        axios.get("http://localhost:5000/random-text", { params: { lang: language } }).then((res) => {
             setText(res.data.text);
             setUserInput("");
             setMistakes(0);
@@ -47,7 +47,11 @@ export default function TypingTest() {
     };
 
     useEffect(() => {
-        fetchText();
+        fetchText(testingLanguage);
+    }, [testingLanguage]);
+
+    useEffect(() => {
+        fetchText(testingLanguage);
     }, []);
 
     useEffect(() => {
@@ -85,7 +89,7 @@ export default function TypingTest() {
 
     const resetTest = () => {
         setIsRotating(true);
-        fetchText();
+        fetchText(testingLanguage);
         inputRef.current?.focus();
 
         setTimeout(() => {
