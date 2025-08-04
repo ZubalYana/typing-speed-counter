@@ -126,6 +126,16 @@ export default function TypingTest() {
 
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
+        const index = userInput.length;
+        const expectedChar = text[index];
+        console.log({
+            key: e.key,
+            code: e.code,
+            expectedChar,
+            keyCode: e.key.charCodeAt(0),
+            expectedCode: expectedChar?.charCodeAt(0),
+        });
+
 
         if (!started && e.key.length === 1) {
             setStarted(true);
@@ -156,9 +166,7 @@ export default function TypingTest() {
             return;
         }
 
-        const index = userInput.length;
         const typedChar = e.key;
-        const expectedChar = text[index];
 
         if (firstErrorIndex === null) {
             if (typedChar === expectedChar) {
@@ -198,7 +206,7 @@ export default function TypingTest() {
             </h5>
 
             <div className="w-[90%] flex justify-between">
-                <div className="flex items-center">
+                <div className="flex items-center w-[240px]">
                     <h5>Typing language:</h5>
                     <Select
                         value={testingLanguage}
@@ -226,29 +234,31 @@ export default function TypingTest() {
                         ))}
                     </Select>
                 </div>
-                <Stack direction="row" spacing={1} alignItems="center">
-                    <h5>Duration:</h5>
-                    <ButtonGroup size="small" aria-label="typing duration" >
-                        {[30, 60, 90].map((d) => (
-                            <Button
-                                key={d}
-                                variant={duration === d ? "contained" : "outlined"}
-                                onClick={() => setDuration(d)}
-                                sx={{
-                                    color: duration === d ? "#fff" : "#333",
-                                    borderColor: "#10B981",
-                                    backgroundColor: duration === d ? "#10B981" : "transparent",
-                                    "&:hover": {
-                                        backgroundColor: duration === d ? "#10B981" : "#f5f5f5",
-                                    },
-                                    fontWeight: 500
-                                }}
-                            >
-                                {d}s
-                            </Button>
-                        ))}
-                    </ButtonGroup>
-                </Stack>
+                <div className=" w-[240px] flex items-center justify-end">
+                    <Stack direction="row" spacing={1} alignItems="center">
+                        <h5>Duration:</h5>
+                        <ButtonGroup size="small" aria-label="typing duration" >
+                            {[30, 60, 90].map((d) => (
+                                <Button
+                                    key={d}
+                                    variant={duration === d ? "contained" : "outlined"}
+                                    onClick={() => setDuration(d)}
+                                    sx={{
+                                        color: duration === d ? "#fff" : "#333",
+                                        borderColor: "#10B981",
+                                        backgroundColor: duration === d ? "#10B981" : "transparent",
+                                        "&:hover": {
+                                            backgroundColor: duration === d ? "#10B981" : "#f5f5f5",
+                                        },
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    {d}s
+                                </Button>
+                            ))}
+                        </ButtonGroup>
+                    </Stack>
+                </div>
 
             </div>
 
@@ -288,10 +298,6 @@ export default function TypingTest() {
                     <RestartAltIcon className={isRotating ? "rotate-once" : ""} sx={{ fontSize: 28 }} />
                 </div>
 
-
-                {!isFinished && (
-                    <h3 className="ml-[2px]">{timeRemaining}s</h3>
-                )}
             </div>
 
             <ResultModal
