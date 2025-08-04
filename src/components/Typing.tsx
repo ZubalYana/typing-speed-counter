@@ -137,6 +137,7 @@ export default function TypingTest() {
             "Home",
             "End",
             "Delete",
+            "Backspace",
         ];
         if (blocked.includes(e.key)) {
             e.preventDefault();
