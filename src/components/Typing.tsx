@@ -11,6 +11,7 @@ import axios from "axios";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ResultModal from "./ResultModal";
+import { Clock } from "lucide-react";
 
 export default function TypingTest() {
     const [text, setText] = useState<string>("");
@@ -29,6 +30,7 @@ export default function TypingTest() {
     const [showResultsModal, setShowResultsModal] = useState<boolean>(false);
 
     const timeRemaining = Math.max(0, duration - timeElapsed);
+    const isLowTime = timeRemaining <= 10;
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -94,6 +96,13 @@ export default function TypingTest() {
             setIsRotating(false);
         }, 600);
     };
+
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+    };
+
 
     const renderText = () => {
         return text.split("").map((char, i) => {
@@ -200,8 +209,8 @@ export default function TypingTest() {
     const wpm = Math.round(cpm / 5);
 
     return (
-        <div className="p-4 pt-8 flex flex-col items-center w-full text-[#333]">
-            <h5 className="text-[32px] font-semibold">
+        <div className="p-4 flex flex-col items-center w-full text-[#333]">
+            <h5 className="text-[36px] font-semibold mb-8">
                 Typing Speed Test
             </h5>
 
@@ -233,6 +242,23 @@ export default function TypingTest() {
                             </MenuItem>
                         ))}
                     </Select>
+                </div>
+                <div className="w-[150px] flex items-center justify-center">
+                    {!isFinished && (
+                        <div className="flex items-center">
+                            <Clock />
+                            <p
+                                className="ml-2 text-[16px] font-semibold"
+                                style={{
+                                    color: isLowTime ? "#e74242" : "inherit",
+                                    transition: "color 0.2s ease-in-out",
+                                }}
+                            >
+                                {formatTime(timeRemaining)}
+                            </p>
+
+                        </div>
+                    )}
                 </div>
                 <div className=" w-[240px] flex items-center justify-end">
                     <Stack direction="row" spacing={1} alignItems="center">
