@@ -98,9 +98,11 @@ export default function TypingTest() {
     const renderText = () => {
         return text.split("").map((char, i) => {
             let color = "black";
+            let background = "transparent";
 
             if (i < userInput.length) {
-                color = "green";
+                color = "black";
+                background = "rgba(16, 185, 129, 0.15)"
             }
 
             if (firstErrorIndex !== null && i === firstErrorIndex) {
@@ -108,7 +110,7 @@ export default function TypingTest() {
             }
 
             return (
-                <span key={i} style={{ color, userSelect: "none" }}>
+                <span key={i} style={{ color, background, userSelect: "none" }}>
                     {char}
                 </span>
             );
@@ -129,7 +131,6 @@ export default function TypingTest() {
             setStarted(true);
         }
 
-        //look if it'll be needed to block backspace in future
         const blocked = [
             "ArrowLeft",
             "ArrowRight",
