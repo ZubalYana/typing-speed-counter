@@ -17,6 +17,7 @@ export default function Auth() {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isReminding, setIsReminding] = useState(false);
     const { showAlert } = useAlertStore();
 
     const navigate = useNavigate();
@@ -74,6 +75,60 @@ export default function Auth() {
     const togglePasswordVisibility = () => {
         setShowPassword(prev => !prev);
     };
+
+    const isValidEmail = (email: string): boolean => {
+        return /\S+@\S+\.\S+/.test(email);
+    };
+
+    const remindPassword = async () => {
+        setError('');
+        setSuccess('');
+
+        if (!email.trim()) {
+            const msg = 'Please enter your email to remind the password.';
+            setError(msg);
+            showAlert(msg, 'error');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            const msg = 'Please enter a valid email address.';
+            setError(msg);
+            showAlert(msg, 'error');
+            return;
+        }
+
+        if (isReminding) return;
+        setIsReminding(true);
+        try {
+            const res = await fetch('http://localhost:5000/remind-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+            const data = await res.json();
+
+            if (!res.ok) {
+                const message = data.message || 'Failed to send reminder email.';
+                setError(message);
+                showAlert(message, 'error');
+            } else {
+                const message = 'Password reminder email sent. Check your inbox.';
+                setSuccess(message);
+                showAlert(message, 'success');
+            }
+        } catch (err) {
+            console.error(err);
+            const message = 'Unexpected error while sending reminder.';
+            setError(message);
+            showAlert(message, 'error');
+        } finally {
+            setIsReminding(false);
+        }
+    };
+
+
+
     return (
         <div className="w-full h-screen xl:overflow-hidden flex justify-center items-center">
             <form
@@ -98,10 +153,15 @@ export default function Auth() {
                     <TextField
                         label="Email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            if (error) setError('');
+                            if (success) setSuccess('');
+                        }}
                         fullWidth
                         margin="normal"
                     />
+
                     <TextField
                         label="Password"
                         type={showPassword ? 'text' : 'password'}
@@ -123,6 +183,17 @@ export default function Auth() {
                             ),
                         }}
                     />
+                    {isRegister ? '' : (
+                        <span
+                            role="button"
+                            onClick={remindPassword}
+                            className="text-[#10B981] cursor-pointer hover:underline text-[14px] select-none"
+                            aria-disabled={isReminding}
+                        >
+                            {isReminding ? 'Sending...' : 'Forgot password?'}
+                        </span>
+                    )}
+
 
                 </div>
 
