@@ -31,15 +31,15 @@ export default function UserProfile() {
 
 
     return (
-        <div className='w-full p-8'>
-            <h5 className="text-[36px] font-semibold mb-8">
+        <div className='w-full p-8 pt-0 text-[#333]'>
+            <h5 className="text-[36px] font-semibold mb-5">
                 User Profile
             </h5>
-            <div>
-                <UserCircle2 />
-                <div>
-                    <h2>{user?.name}</h2>
-                    <h2>{user?.email}</h2>
+            <div className='flex items-center'>
+                <UserCircle2 size={90} strokeWidth={1.5} />
+                <div className='ml-3'>
+                    <h2 className='text-[24px] font-semibold'>{user?.name}</h2>
+                    <h2 className='text-[16px]'>{user?.email}</h2>
                 </div>
             </div>
         </div>
