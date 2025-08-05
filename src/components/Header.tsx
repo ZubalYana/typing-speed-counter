@@ -25,7 +25,7 @@ export default function Header() {
 
     const handleClick = () => {
         if (userName) {
-            // navigate('/profile');
+            navigate('/profile');
         } else {
             navigate("/auth");
         }
