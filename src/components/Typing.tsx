@@ -78,6 +78,32 @@ export default function TypingTest() {
     useEffect(() => {
         if (isFinished) {
             setShowResultsModal(true);
+
+            const saveTestResult = async () => {
+                const token = localStorage.getItem("token")
+                try {
+                    await axios.post(
+                        'http://localhost:5000/typing-tests',
+                        {
+                            wpm,
+                            cpm,
+                            accuracy,
+                            mistakes,
+                            textLanguage: testingLanguage,
+                            duration,
+                            timeElapsed,
+                        },
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
+                } catch (error) {
+                    console.error("Failed to save the test result:", error)
+                }
+            };
+            saveTestResult();
         }
     }, [isFinished]);
 
@@ -96,14 +122,11 @@ export default function TypingTest() {
             setIsRotating(false);
         }, 600);
     };
-
     const formatTime = (seconds: number) => {
         const m = Math.floor(seconds / 60);
         const s = seconds % 60;
         return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
     };
-
-
     const renderText = () => {
         return text.split("").map((char, i) => {
             let color = "black";
@@ -125,13 +148,11 @@ export default function TypingTest() {
             );
         });
     };
-
     const handleChange = (event: SelectChangeEvent) => {
         const lang = event.target.value;
         setTestingLanguage(lang);
         localStorage.setItem("typingLanguage", lang);
     };
-
 
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
