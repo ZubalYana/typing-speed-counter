@@ -16,6 +16,7 @@
     "@mui/material": "^7.2.0",
     "@tailwindcss/vite": "^4.1.11",
     "axios": "^1.11.0",
+    "flag-icons": "^7.5.0",
     "framer-motion": "^12.23.12",
     "lucide-react": "^0.536.0",
     "react": "^19.1.0",

@@ -37,6 +37,10 @@ export default function TypingTest() {
     const isLowTime = timeRemaining <= 10;
     const inputRef = useRef<HTMLInputElement | null>(null);
     const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const languageFlagMap: Record<string, string> = {
+        English: "us",
+        Ukrainian: "ua",
+    };
 
     const fetchText = (language: string) => {
         axios.get("http://localhost:5000/random-text", { params: { lang: language } }).then((res) => {
@@ -157,12 +161,6 @@ export default function TypingTest() {
         setTestingLanguage(lang);
         localStorage.setItem("typingLanguage", lang);
     };
-    const handleDurationChange = (event: SelectChangeEvent) => {
-        const duration = event.target.value;
-        setDuration(Number(duration));
-        localStorage.setItem("typingDuration", duration);
-    }
-
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
         const index = userInput.length;
@@ -245,7 +243,7 @@ export default function TypingTest() {
             </h5>
 
             <div className="w-[90%] flex justify-between">
-                <div className="flex items-center w-[255px]">
+                <div className="flex items-center w-[285px]">
                     <h5>Typing language:</h5>
                     <Select
                         value={testingLanguage}
@@ -263,15 +261,17 @@ export default function TypingTest() {
                             <MenuItem
                                 key={lang}
                                 value={lang}
-                                sx={{
-                                    textDecoration: 'none',
-
-                                }}
+                                sx={{ textDecoration: 'none' }}
                             >
+                                <span
+                                    className={`fi fi-${languageFlagMap[lang]}`}
+                                    style={{ marginRight: 8, width: 20, height: 14 }}
+                                ></span>
                                 {lang}
                             </MenuItem>
                         ))}
                     </Select>
+
                 </div>
                 <div className="w-[150px] flex items-center justify-center">
                     {!isFinished && (
@@ -290,7 +290,7 @@ export default function TypingTest() {
                         </div>
                     )}
                 </div>
-                <div className=" w-[255px] flex items-center justify-end">
+                <div className=" w-[285px] flex items-center justify-end">
                     <Stack direction="row" spacing={1} alignItems="center">
                         <h5>Duration:</h5>
                         <ButtonGroup size="small" aria-label="typing duration" >
