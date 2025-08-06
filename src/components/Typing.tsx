@@ -236,7 +236,7 @@ export default function TypingTest() {
             </h5>
 
             <div className="w-[90%] flex justify-between">
-                <div className="flex items-center w-[240px]">
+                <div className="flex items-center w-[255px]">
                     <h5>Typing language:</h5>
                     <Select
                         value={testingLanguage}
@@ -281,7 +281,7 @@ export default function TypingTest() {
                         </div>
                     )}
                 </div>
-                <div className=" w-[240px] flex items-center justify-end">
+                <div className=" w-[255px] flex items-center justify-end">
                     <Stack direction="row" spacing={1} alignItems="center">
                         <h5>Duration:</h5>
                         <ButtonGroup size="small" aria-label="typing duration" >
