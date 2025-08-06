@@ -25,7 +25,11 @@ export default function TypingTest() {
         return localStorage.getItem("typingLanguage") || "English";
     });
     const testingLanguagesOptions = ['English', 'Ukrainian']
-    const [duration, setDuration] = useState<number>(30);
+    const [duration, setDuration] = useState<number>(() => {
+        const stored = localStorage.getItem("typingDuration")
+        return stored ? Number(stored) : 30
+    })
+
     const [isRotating, setIsRotating] = useState<boolean>(false);
     const [showResultsModal, setShowResultsModal] = useState<boolean>(false);
 
@@ -153,6 +157,11 @@ export default function TypingTest() {
         setTestingLanguage(lang);
         localStorage.setItem("typingLanguage", lang);
     };
+    const handleDurationChange = (event: SelectChangeEvent) => {
+        const duration = event.target.value;
+        setDuration(Number(duration));
+        localStorage.setItem("typingDuration", duration);
+    }
 
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
@@ -289,7 +298,10 @@ export default function TypingTest() {
                                 <Button
                                     key={d}
                                     variant={duration === d ? "contained" : "outlined"}
-                                    onClick={() => setDuration(d)}
+                                    onClick={() => {
+                                        setDuration(d);
+                                        localStorage.setItem("typingDuration", String(d));
+                                    }}
                                     sx={{
                                         color: duration === d ? "#fff" : "#333",
                                         borderColor: "#10B981",
@@ -302,6 +314,7 @@ export default function TypingTest() {
                                 >
                                     {d}s
                                 </Button>
+
                             ))}
                         </ButtonGroup>
                     </Stack>
