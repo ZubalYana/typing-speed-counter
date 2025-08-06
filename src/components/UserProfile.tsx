@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { UserCircle2 } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
+import DonutStat from './DonutStat';
 export default function UserProfile() {
     type User = {
         name: String;
@@ -11,6 +11,8 @@ export default function UserProfile() {
 
     const [user, setUser] = useState<User | null>(null)
     const [cpmData, setCpmData] = useState([]);
+    const [summary, setSummary] = useState({ avgAccuracy: 0, totalTests: 0 });
+    const [avgMistakes, setAvgMistakes] = useState(0);
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -59,6 +61,42 @@ export default function UserProfile() {
         fetchCpmStats();
     }, []);
 
+    useEffect(() => {
+        const fetchSummary = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const res = await axios.get("http://localhost:5000/typing-tests/summary", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setSummary(res.data.summary);
+            } catch (err) {
+                console.error("Failed to fetch summary:", err);
+            }
+        };
+
+        const fetchMistakeStats = async () => {
+            const token = localStorage.getItem("token");
+            try {
+                const res = await axios.get("http://localhost:5000/typing-tests", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                const tests = res.data.tests;
+                const totalMistakes = tests.reduce((sum: number, t: any) => sum + t.mistakes, 0);
+                const avg = tests.length ? (totalMistakes / tests.length) : 0;
+                setAvgMistakes(Number(avg.toFixed(2)));
+            } catch (err) {
+                console.error("Failed to fetch tests:", err);
+            }
+        };
+
+        fetchSummary();
+        fetchMistakeStats();
+    }, []);
 
     return (
         <div className='w-full p-8 pt-0 text-[#333]'>
@@ -66,7 +104,7 @@ export default function UserProfile() {
                 User Profile
             </h5>
             <div className='flex items-center'>
-                <UserCircle2 size={90} strokeWidth={1.5} />
+                <UserCircle2 size={90} strokeWidth={1.2} />
                 <div className='ml-3'>
                     <h2 className='text-[24px] font-semibold'>{user?.name}</h2>
                     <h2 className='text-[16px]'>{user?.email}</h2>
@@ -91,28 +129,38 @@ export default function UserProfile() {
                         />
                     </LineChart>
                 </ResponsiveContainer>
-                <h4 className="text-lg font-semibold mt-8 mb-2">Mistakes per attempt</h4>
-                <div style={{ width: '45%', height: 300 }}>
-                    <ResponsiveContainer>
-                        <LineChart data={cpmData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis />
-                            <Tooltip />
-                            <Line
-                                type="monotone"
-                                dataKey="mistakes"
-                                stroke="#e74242"
-                                strokeWidth={2}
-                                name="Mistakes"
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
+            </div>
+            <div className='w-full flex justify-between'>
+                <div className='w-[45%]'>
+                    <h4 className="text-lg font-semibold mt-8 mb-2">Mistakes per attempt</h4>
+                    <div style={{ width: '100%', height: 300 }}>
+                        <ResponsiveContainer>
+                            <LineChart data={cpmData}>
+                                <CartesianGrid strokeDasharray="3 3" />
+                                <XAxis dataKey="date" />
+                                <YAxis />
+                                <Tooltip />
+                                <Line
+                                    type="monotone"
+                                    dataKey="mistakes"
+                                    stroke="#e74242"
+                                    strokeWidth={2}
+                                    name="Mistakes"
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
                 </div>
 
+                <div className='w-[45%] flex justify-center items-center'>
+                    <div className="w-full flex justify-center gap-25 relative">
+                        <DonutStat value={Number(summary.avgAccuracy.toFixed(1))} label="Avg Accuracy" unit="%" color="#10B981" />
+                        <DonutStat value={avgMistakes} label="Avg Mistakes" color="#f87171" />
+                    </div>
+                </div>
+
+
             </div>
-
-
         </div>
     )
 }
