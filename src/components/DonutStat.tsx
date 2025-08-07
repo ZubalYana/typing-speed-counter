@@ -34,7 +34,7 @@ const DonutStat = ({ value, label, unit = '', color = '#10B981' }: DonutStatProp
                 <div className="text-2xl font-bold">
                     {value}{unit}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-[#333]">
                     {label}
                 </div>
             </div>
