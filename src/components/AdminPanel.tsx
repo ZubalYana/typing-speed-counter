@@ -8,15 +8,29 @@ import {
     Dialog,
     Button
 } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+type User = {
+    _id: string;
+    name: string;
+    email: string;
+    isVerified: boolean;
+    isBlocked: boolean;
+    registered: string;
+    role: string;
+};
 
 
 export default function AdminPanel() {
-    const [users, setUsers] = useState([]);
-    const [editingUser, setEditingUser] = useState(null);
+    const [users, setUsers] = useState<User[]>([]);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
     const { showAlert } = useAlertStore()
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [confirmAction, setConfirmAction] = useState<null | (() => void)>(null);
     const [confirmMessage, setConfirmMessage] = useState('');
+    const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+    const [filterStatus, setFilterStatus] = useState<'all' | 'verified' | 'not_verified'>('all');
+    const [filterBlocked, setFilterBlocked] = useState<'all' | 'blocked' | 'not_blocked'>('all');
+    const [roleFilter, setRoleFilter] = useState('');
 
     const fetchUsers = () => {
         axios.get('http://localhost:5000/users')
@@ -66,6 +80,22 @@ export default function AdminPanel() {
         );
     };
 
+    const filteredUsers = users
+        .filter((user) => {
+            if (filterStatus === 'verified' && !user.isVerified) return false;
+            if (filterStatus === 'not_verified' && user.isVerified) return false;
+            if (filterBlocked === 'blocked' && !user.isBlocked) return false;
+            if (filterBlocked === 'not_blocked' && user.isBlocked) return false;
+            if (roleFilter !== '' && user.role !== roleFilter) return false;
+            return true;
+        })
+        .sort((a, b) => {
+            const dateA = new Date(a.registered).getTime();
+            const dateB = new Date(b.registered).getTime();
+            return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
+        });
+
+
     return (
         <div className="w-full min-h-screen p-8 bg-gray-100 text-gray-800">
             <div className="flex items-center">
@@ -74,6 +104,56 @@ export default function AdminPanel() {
             </div>
 
             <h2 className="text-lg font-semibold mt-8 mb-4">User Management</h2>
+            <div className="flex gap-4 mb-4">
+                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                    <InputLabel id="filter-status-label">Verification Status</InputLabel>
+                    <Select
+                        labelId="filter-status-label"
+                        value={filterStatus}
+                        label="Verification Status"
+                        onChange={(e) =>
+                            setFilterStatus(e.target.value as 'all' | 'verified' | 'not_verified')
+                        }
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="verified">Verified</MenuItem>
+                        <MenuItem value="not_verified">Not Verified</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                    <InputLabel id="filter-blocked-label">Block Status</InputLabel>
+                    <Select
+                        labelId="filter-blocked-label"
+                        value={filterBlocked}
+                        label="Block Status"
+                        onChange={(e) =>
+                            setFilterBlocked(e.target.value as 'all' | 'blocked' | 'not_blocked')
+                        }
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="blocked">Blocked</MenuItem>
+                        <MenuItem value="not_blocked">Not Blocked</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl size="small" sx={{ minWidth: 180 }}>
+                    <InputLabel id="sort-order-label">Sort by Date</InputLabel>
+                    <Select
+                        fullWidth
+                        labelId="sort-order-label"
+                        value={sortOrder}
+                        label="Sort by Date"
+                        onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                        <MenuItem value="newest">Newest First</MenuItem>
+                        <MenuItem value="oldest">Oldest First</MenuItem>
+                    </Select>
+                </FormControl>
+
+
+
+            </div>
 
             <div className="grid grid-cols-5 gap-4 p-3 bg-gray-300 rounded-lg font-semibold text-sm">
                 <p>Name</p>
@@ -83,7 +163,7 @@ export default function AdminPanel() {
                 <p className="text-center">Actions</p>
             </div>
 
-            {users.map((user: any) => (
+            {filteredUsers.map((user: User) => (
                 <div
                     key={user._id}
                     className="grid grid-cols-5 gap-4 items-center p-4 bg-white rounded-lg shadow-sm mt-2 hover:bg-gray-50 transition-all"
