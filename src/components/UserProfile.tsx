@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { UserCircle2 } from 'lucide-react'
+import { UserCircle2, LogOut } from 'lucide-react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import DonutStat from './DonutStat';
+import { Button } from '@mui/material';
+import { Dialog } from '@mui/material';
 export default function UserProfile() {
     type User = {
         name: String;
@@ -13,6 +15,8 @@ export default function UserProfile() {
     const [cpmData, setCpmData] = useState([]);
     const [summary, setSummary] = useState({ avgAccuracy: 0, totalTests: 0 });
     const [avgMistakes, setAvgMistakes] = useState(0);
+    const [openLogoutConfirm, setOpenLogoutConfirm] = useState(false);
+
     const token = localStorage.getItem('token');
 
     useEffect(() => {
@@ -98,6 +102,11 @@ export default function UserProfile() {
         fetchMistakeStats();
     }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        window.location.href = '/auth';
+    }
+
     return (
         <div className='w-full p-8 pt-0 text-[#333]'>
             <h5 className="text-[36px] font-semibold mb-5">
@@ -158,9 +167,46 @@ export default function UserProfile() {
                         <DonutStat value={avgMistakes} label="Avg Mistakes" color="#f87171" />
                     </div>
                 </div>
-
-
             </div>
+            <div className='mt-18'>
+                <Button
+                    type="submit"
+                    variant="outlined"
+                    color="primary"
+                    sx={{
+                        borderColor: '#e74242',
+                        width: '200px',
+                        color: '#e74242',
+                        borderWidth: '2px',
+                        height: '45px'
+                    }}
+                    onClick={() => setOpenLogoutConfirm(true)}
+                >
+                    <LogOut size={17} className='mr-2' />
+                    Log out
+                </Button>
+            </div>
+            <Dialog
+                open={openLogoutConfirm}
+                onClose={() => setOpenLogoutConfirm(false)}
+            >
+                <div className='p-6 text-[#333]'>
+                    <h4 className='text-[20px] font-medium'>Confirm Action</h4>
+                    <p className='text-[16px] font-normal mt-1'>Are you sure you want to log out?</p>
+                    <div className='w-full flex items-center justify-end mt-3 gap-3'>
+                        <Button onClick={() => setOpenLogoutConfirm(false)} color="inherit">
+                            Cancel
+                        </Button>
+                        <Button
+                            onClick={handleLogout}
+                            variant="contained"
+                            color="error"
+                        >
+                            Log out
+                        </Button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     )
 }
