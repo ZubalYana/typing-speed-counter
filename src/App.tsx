@@ -8,6 +8,8 @@ import PageLayout from './components/PageLayout'
 import AdminLogin from './components/AdminLogin'
 import AdminPanel from './components/AdminPanel'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
+import MagicLoginPage from './components/MagicLoginPage'
+
 function App() {
 
   return (
@@ -22,6 +24,7 @@ function App() {
         } />
         <Route path="/" element={<PageLayout><TypingTest /></PageLayout>} />
         <Route path="/profile" element={<PageLayout><UserProfile /></PageLayout>} />
+        <Route path="/magic-login" element={<MagicLoginPage />} />
       </Routes>
       <AlertSnackbar />
     </Router>

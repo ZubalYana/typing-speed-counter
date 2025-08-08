@@ -101,7 +101,7 @@ export default function Auth() {
         if (isReminding) return;
         setIsReminding(true);
         try {
-            const res = await fetch('http://localhost:5000/remind-password', {
+            const res = await fetch('http://localhost:5000/magic-login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -126,8 +126,6 @@ export default function Auth() {
             setIsReminding(false);
         }
     };
-
-
 
     return (
         <div className="w-full h-screen xl:overflow-hidden flex justify-center items-center">
