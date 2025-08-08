@@ -9,6 +9,7 @@ import AdminLogin from './components/AdminLogin'
 import AdminPanel from './components/AdminPanel'
 import ProtectedAdminRoute from './components/ProtectedAdminRoute'
 import MagicLoginPage from './components/MagicLoginPage'
+import LeadersTable from './components/LeadersTable'
 
 function App() {
 
@@ -24,6 +25,7 @@ function App() {
         } />
         <Route path="/" element={<PageLayout><TypingTest /></PageLayout>} />
         <Route path="/profile" element={<PageLayout><UserProfile /></PageLayout>} />
+        <Route path="/leaders-table" element={<PageLayout><LeadersTable /></PageLayout>} />
         <Route path="/magic-login" element={<MagicLoginPage />} />
       </Routes>
       <AlertSnackbar />

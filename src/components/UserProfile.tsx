@@ -109,7 +109,7 @@ export default function UserProfile() {
 
     return (
         <div className='w-full p-8 pt-0 text-[#333]'>
-            <h5 className="text-[36px] font-semibold mb-5">
+            <h5 className="text-[28px] font-semibold mb-5">
                 User Profile
             </h5>
             <div className='flex items-center'>
