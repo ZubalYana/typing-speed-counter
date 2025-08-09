@@ -8,7 +8,7 @@ import {
     Dialog,
     Button
 } from '@mui/material';
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, TextField } from '@mui/material';
 type User = {
     _id: string;
     name: string;
@@ -31,6 +31,7 @@ export default function AdminPanel() {
     const [filterStatus, setFilterStatus] = useState<'all' | 'verified' | 'not_verified'>('all');
     const [filterBlocked, setFilterBlocked] = useState<'all' | 'blocked' | 'not_blocked'>('all');
     const [roleFilter, setRoleFilter] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
 
     const fetchUsers = () => {
         axios.get('http://localhost:5000/users')
@@ -87,6 +88,17 @@ export default function AdminPanel() {
             if (filterBlocked === 'blocked' && !user.isBlocked) return false;
             if (filterBlocked === 'not_blocked' && user.isBlocked) return false;
             if (roleFilter !== '' && user.role !== roleFilter) return false;
+
+            if (searchQuery.trim() !== '') {
+                const query = searchQuery.toLowerCase();
+                if (
+                    !user.name.toLowerCase().includes(query) &&
+                    !user.email.toLowerCase().includes(query)
+                ) {
+                    return false;
+                }
+            }
+
             return true;
         })
         .sort((a, b) => {
@@ -94,6 +106,7 @@ export default function AdminPanel() {
             const dateB = new Date(b.registered).getTime();
             return sortOrder === 'newest' ? dateB - dateA : dateA - dateB;
         });
+
 
 
     return (
@@ -104,53 +117,64 @@ export default function AdminPanel() {
             </div>
 
             <h2 className="text-lg font-semibold mt-8 mb-4">User Management</h2>
-            <div className="flex gap-4 mb-4">
-                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
-                    <InputLabel id="filter-status-label">Verification Status</InputLabel>
-                    <Select
-                        labelId="filter-status-label"
-                        value={filterStatus}
-                        label="Verification Status"
-                        onChange={(e) =>
-                            setFilterStatus(e.target.value as 'all' | 'verified' | 'not_verified')
-                        }
-                    >
-                        <MenuItem value="all">All</MenuItem>
-                        <MenuItem value="verified">Verified</MenuItem>
-                        <MenuItem value="not_verified">Not Verified</MenuItem>
-                    </Select>
-                </FormControl>
+            <div className='flex justify-between'>
+                <div className="flex gap-4 mb-4">
+                    <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                        <InputLabel id="filter-status-label">Verification Status</InputLabel>
+                        <Select
+                            labelId="filter-status-label"
+                            value={filterStatus}
+                            label="Verification Status"
+                            onChange={(e) =>
+                                setFilterStatus(e.target.value as 'all' | 'verified' | 'not_verified')
+                            }
+                        >
+                            <MenuItem value="all">All</MenuItem>
+                            <MenuItem value="verified">Verified</MenuItem>
+                            <MenuItem value="not_verified">Not Verified</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
-                    <InputLabel id="filter-blocked-label">Block Status</InputLabel>
-                    <Select
-                        labelId="filter-blocked-label"
-                        value={filterBlocked}
-                        label="Block Status"
-                        onChange={(e) =>
-                            setFilterBlocked(e.target.value as 'all' | 'blocked' | 'not_blocked')
-                        }
-                    >
-                        <MenuItem value="all">All</MenuItem>
-                        <MenuItem value="blocked">Blocked</MenuItem>
-                        <MenuItem value="not_blocked">Not Blocked</MenuItem>
-                    </Select>
-                </FormControl>
+                    <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                        <InputLabel id="filter-blocked-label">Block Status</InputLabel>
+                        <Select
+                            labelId="filter-blocked-label"
+                            value={filterBlocked}
+                            label="Block Status"
+                            onChange={(e) =>
+                                setFilterBlocked(e.target.value as 'all' | 'blocked' | 'not_blocked')
+                            }
+                        >
+                            <MenuItem value="all">All</MenuItem>
+                            <MenuItem value="blocked">Blocked</MenuItem>
+                            <MenuItem value="not_blocked">Not Blocked</MenuItem>
+                        </Select>
+                    </FormControl>
 
-                <FormControl size="small" sx={{ minWidth: 180 }}>
-                    <InputLabel id="sort-order-label">Sort by Date</InputLabel>
-                    <Select
-                        fullWidth
-                        labelId="sort-order-label"
-                        value={sortOrder}
-                        label="Sort by Date"
-                        onChange={(e) => setSortOrder(e.target.value)}
-                    >
-                        <MenuItem value="newest">Newest First</MenuItem>
-                        <MenuItem value="oldest">Oldest First</MenuItem>
-                    </Select>
-                </FormControl>
+                    <FormControl size="small" sx={{ minWidth: 180 }}>
+                        <InputLabel id="sort-order-label">Sort by Date</InputLabel>
+                        <Select
+                            fullWidth
+                            labelId="sort-order-label"
+                            value={sortOrder}
+                            label="Sort by Date"
+                            onChange={(e) => setSortOrder(e.target.value)}
+                        >
+                            <MenuItem value="newest">Newest First</MenuItem>
+                            <MenuItem value="oldest">Oldest First</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
+                <TextField
+                    size="small"
+                    label="Search by Name or Email"
+                    variant="outlined"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    sx={{ minWidth: 240 }}
+                />
             </div>
+
 
             <div className="grid grid-cols-5 gap-4 p-3 bg-gray-300 rounded-lg font-semibold text-sm">
                 <p>Name</p>
