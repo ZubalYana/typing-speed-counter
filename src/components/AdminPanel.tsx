@@ -150,9 +150,6 @@ export default function AdminPanel() {
                         <MenuItem value="oldest">Oldest First</MenuItem>
                     </Select>
                 </FormControl>
-
-
-
             </div>
 
             <div className="grid grid-cols-5 gap-4 p-3 bg-gray-300 rounded-lg font-semibold text-sm">
