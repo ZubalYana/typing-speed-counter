@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import useAlertStore from '../stores/useAlertStore';
 import axios from 'axios';
-
+import { Button } from '@mui/material';
 type EditUserModalProps = {
     isOpen: boolean;
     onRequestClose: () => void;
@@ -100,18 +100,28 @@ export default function EditUserModal({ isOpen, onRequestClose, user, onSave }: 
                             </div>
 
                             <div className="flex justify-end gap-3 mt-6">
-                                <button
+                                <Button
+                                    variant="outlined"
                                     onClick={onRequestClose}
-                                    className="px-4 py-2 text-sm bg-gray-200 rounded"
+                                    size="small"
+                                    sx={{ textTransform: 'none' }}
                                 >
                                     Cancel
-                                </button>
-                                <button
+                                </Button>
+                                <Button
+                                    variant="contained"
                                     onClick={handleSave}
-                                    className="px-4 py-2 text-sm bg-[#10B981] text-white rounded"
+                                    size="small"
+                                    sx={{
+                                        textTransform: 'none',
+                                        backgroundColor: '#10B981',
+                                        '&:hover': {
+                                            backgroundColor: '#0E9F6E'
+                                        }
+                                    }}
                                 >
                                     Save
-                                </button>
+                                </Button>
                             </div>
                         </div>
                     </motion.div>
