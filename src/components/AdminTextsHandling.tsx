@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { Pencil, Trash2 } from 'lucide-react'
+import { Pencil, Trash2, Plus } from 'lucide-react'
 import { Dialog, Button } from '@mui/material';
 import useAlertStore from "../stores/useAlertStore"
 import EditTextModal from './EditTextModal';
+import CreateText from './CreateText';
 
 export default function AdminTextsHandling() {
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -11,6 +12,7 @@ export default function AdminTextsHandling() {
     const [confirmMessage, setConfirmMessage] = useState('');
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedText, setSelectedText] = useState<any>(null);
+    const [creationModalOpen, setCreationModalOpen] = useState(false);
 
     const { showAlert } = useAlertStore()
 
@@ -68,10 +70,38 @@ export default function AdminTextsHandling() {
         setEditModalOpen(true);
     };
 
+    const handleCreateNewText = async (data: { text: string; language: string; difficultyLevel: string }) => {
+        try {
+            await axios.post('http://localhost:5000/text', data);
+            showAlert("Text created successfully", "success");
+            fetchTexts();
+            setCreationModalOpen(false);
+        } catch (error) {
+            console.error(error);
+            showAlert("Failed to create text", "error");
+        }
+    };
+
     return (
         <div>
             <h2 className="text-lg font-semibold mt-8 mb-4">Texts Management</h2>
-            <div className='w-full flex flex-wrap gap-x-4 gap-y-4'>
+            <Button
+                color="inherit"
+                sx={{
+                    bgcolor: '#10b981',
+                    color: 'white',
+                    width: '150px',
+                    height: '45px'
+                }}
+                onClick={() => setCreationModalOpen(true)}
+            >
+                <Plus size={20} />
+                <span className="ml-2 text-[14px] font-semibold">New Text</span>
+            </Button>
+            <div>
+            </div>
+
+            <div className='w-full flex flex-wrap gap-x-4 gap-y-4 mt-5'>
                 {texts.map((text) => (
                     <div key={text._id} className='w-[470px] h-[250px] bg-[#f5f5f5] rounded-xl shadow-xl p-4 relative pb-[70px]'>
                         <div className='flex absolute gap-3 bottom-4 right-4'>
@@ -103,7 +133,6 @@ export default function AdminTextsHandling() {
                     </div>
                 ))}
             </div>
-
             <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
                 <div className='p-4 text-[#333]'>
                     <h4 className='text-[20px] font-medium'>Confirm Action</h4>
@@ -124,12 +153,16 @@ export default function AdminTextsHandling() {
                     </div>
                 </div>
             </Dialog>
-
             <EditTextModal
                 isOpen={editModalOpen}
                 onRequestClose={() => setEditModalOpen(false)}
                 textData={selectedText}
                 onSave={fetchTexts}
+            />
+            <CreateText
+                open={creationModalOpen}
+                onClose={() => setCreationModalOpen(false)}
+                onSave={handleCreateNewText}
             />
         </div>
     )
