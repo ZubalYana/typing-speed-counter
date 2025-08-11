@@ -35,3 +35,8 @@ body {
 .rotate-once {
     animation: rotate 0.6s ease;
 }
+
+::selection {
+    background-color: #10b981;
+    color: #fff;
+}
