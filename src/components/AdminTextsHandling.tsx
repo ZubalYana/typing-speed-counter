@@ -13,6 +13,8 @@ export default function AdminTextsHandling() {
     const [editModalOpen, setEditModalOpen] = useState(false);
     const [selectedText, setSelectedText] = useState<any>(null);
     const [creationModalOpen, setCreationModalOpen] = useState(false);
+    const [viewTextOpen, setViewTextOpen] = useState(false);
+    const [fullText, setFullText] = useState("")
 
     const { showAlert } = useAlertStore()
 
@@ -135,7 +137,15 @@ export default function AdminTextsHandling() {
                         </p>
                         <p className='text-[14px] mt-2'>
                             <span className='font-semibold mr-1'>Text:</span>
-                            {trimText(text.text, 310)}
+                            <span
+                                className='cursor-pointer hover:underline'
+                                onClick={() => {
+                                    setFullText(text.text);
+                                    setViewTextOpen(true);
+                                }}
+                            >
+                                {trimText(text.text, 310)}
+                            </span>
                         </p>
                     </div>
                 ))}
@@ -171,6 +181,17 @@ export default function AdminTextsHandling() {
                 onClose={() => setCreationModalOpen(false)}
                 onSave={handleCreateNewText}
             />
+            <Dialog open={viewTextOpen} onClose={() => setViewTextOpen(false)} maxWidth="md" fullWidth>
+                <div className='p-4 text-[#333]'>
+                    <h4 className='text-[20px] font-medium mb-3'>Full Text</h4>
+                    <p className='whitespace-pre-wrap'>{fullText}</p>
+                    <div className='flex justify-end mt-4'>
+                        <Button onClick={() => setViewTextOpen(false)} color="inherit">
+                            Close
+                        </Button>
+                    </div>
+                </div>
+            </Dialog>
         </div>
     )
 }
