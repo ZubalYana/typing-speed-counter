@@ -87,6 +87,7 @@ export default function CreateText({ open, onClose, onSave }: CreateTextProps) {
                         variant="contained"
                         color="primary"
                         onClick={handleSave}
+                        sx={{ backgroundColor: '#10B981' }}
                     >
                         Save
                     </Button>

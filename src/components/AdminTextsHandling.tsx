@@ -20,6 +20,7 @@ export default function AdminTextsHandling() {
         _id: string;
         text: string;
         language: string;
+        difficultyLevel: string;
     }
 
     const [texts, setTexts] = useState<Text[]>([]);
@@ -98,8 +99,6 @@ export default function AdminTextsHandling() {
                 <Plus size={20} />
                 <span className="ml-2 text-[14px] font-semibold">New Text</span>
             </Button>
-            <div>
-            </div>
 
             <div className='w-full flex flex-wrap gap-x-4 gap-y-4 mt-5'>
                 {texts.map((text) => (
@@ -125,6 +124,14 @@ export default function AdminTextsHandling() {
                                 style={{ marginRight: 4, width: 20, height: 14 }}
                             ></span>
                             {text.language}
+                        </p>
+                        <p className='text-[14px] mt-2 flex items-center'>
+                            <span className='font-semibold mr-2'>Difficulty:</span>
+                            <div className='flex items-center'>
+                                <div className={`w-[15px] h-[15px] rounded-full mr-1 ${text.difficultyLevel == 'Easy' ? 'bg-green-600' : ""} ${text.difficultyLevel == 'Medium' ? 'bg-amber-600' : ""} ${text.difficultyLevel == 'Hard' ? 'bg-red-600' : ""}`}></div>
+                                {text.difficultyLevel}
+                            </div>
+
                         </p>
                         <p className='text-[14px] mt-2'>
                             <span className='font-semibold mr-1'>Text:</span>
