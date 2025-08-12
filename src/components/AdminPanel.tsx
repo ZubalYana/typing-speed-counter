@@ -32,7 +32,6 @@ export default function AdminPanel() {
     const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
     const [filterStatus, setFilterStatus] = useState<'all' | 'verified' | 'not_verified'>('all');
     const [filterBlocked, setFilterBlocked] = useState<'all' | 'blocked' | 'not_blocked'>('all');
-    const [roleFilter, setRoleFilter] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [activeTab, setActiveTab] = useState<'users' | 'texts'>('users');
 
@@ -90,7 +89,6 @@ export default function AdminPanel() {
             if (filterStatus === 'not_verified' && user.isVerified) return false;
             if (filterBlocked === 'blocked' && !user.isBlocked) return false;
             if (filterBlocked === 'not_blocked' && user.isBlocked) return false;
-            if (roleFilter !== '' && user.role !== roleFilter) return false;
 
             if (searchQuery.trim() !== '') {
                 const query = searchQuery.toLowerCase();
