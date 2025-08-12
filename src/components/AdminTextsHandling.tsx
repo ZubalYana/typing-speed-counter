@@ -5,6 +5,7 @@ import { Dialog, Button } from '@mui/material';
 import useAlertStore from "../stores/useAlertStore"
 import EditTextModal from './EditTextModal';
 import CreateText from './CreateText';
+import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 
 export default function AdminTextsHandling() {
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -15,6 +16,9 @@ export default function AdminTextsHandling() {
     const [creationModalOpen, setCreationModalOpen] = useState(false);
     const [viewTextOpen, setViewTextOpen] = useState(false);
     const [fullText, setFullText] = useState("")
+    const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
+    const [filterLanguage, setFilterLanguage] = useState<"english" | "ukrainian" | "all">("all")
+    const [filterDifficulty, setFilterDifficulty] = useState<"easy" | "medium" | "hard" | "all">("all")
 
     const { showAlert } = useAlertStore()
 
@@ -85,6 +89,26 @@ export default function AdminTextsHandling() {
         }
     };
 
+    const filteredTexts = texts
+        .filter((t) => {
+            if (filterLanguage !== "all" && t.language.toLowerCase() !== filterLanguage) {
+                return false;
+            }
+
+            if (filterDifficulty !== "all" && t.difficultyLevel.toLowerCase() !== filterDifficulty) {
+                return false;
+            }
+
+            return true;
+        })
+        .sort((a, b) => {
+            const dateA = new Date((a as any).createdAt || 0).getTime();
+            const dateB = new Date((b as any).createdAt || 0).getTime();
+
+            return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+        });
+
+
     return (
         <div>
             <h2 className="text-lg font-semibold mt-8 mb-4">Texts Management</h2>
@@ -102,8 +126,57 @@ export default function AdminTextsHandling() {
                 <span className="ml-2 text-[14px] font-semibold">New Text</span>
             </Button>
 
+            <div className="flex gap-4 mb-4 mt-8">
+                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                    <InputLabel id="filter-status-label">Language</InputLabel>
+                    <Select
+                        labelId="filter-status-label"
+                        value={filterLanguage}
+                        label="Verification Status"
+                        onChange={(e) =>
+                            setFilterLanguage(e.target.value as 'all' | 'english' | 'ukrainian')
+                        }
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="english">English</MenuItem>
+                        <MenuItem value="ukrainian">Ukrainian</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl size="small" className="min-w-[180px]" sx={{ minWidth: 140 }}>
+                    <InputLabel id="filter-blocked-label">Difficulty</InputLabel>
+                    <Select
+                        labelId="filter-blocked-label"
+                        value={filterDifficulty}
+                        label="Block Status"
+                        onChange={(e) =>
+                            setFilterDifficulty(e.target.value as 'all' | 'easy' | 'medium' | 'hard')
+                        }
+                    >
+                        <MenuItem value="all">All</MenuItem>
+                        <MenuItem value="easy">Easy</MenuItem>
+                        <MenuItem value="medium">Medium</MenuItem>
+                        <MenuItem value="hard">Hard</MenuItem>
+                    </Select>
+                </FormControl>
+
+                <FormControl size="small" sx={{ minWidth: 180 }}>
+                    <InputLabel id="sort-order-label">Sort by Date</InputLabel>
+                    <Select
+                        fullWidth
+                        labelId="sort-order-label"
+                        value={sortOrder}
+                        label="Sort by Date"
+                        onChange={(e) => setSortOrder(e.target.value)}
+                    >
+                        <MenuItem value="newest">Newest First</MenuItem>
+                        <MenuItem value="oldest">Oldest First</MenuItem>
+                    </Select>
+                </FormControl>
+            </div>
+
             <div className='w-full flex flex-wrap gap-x-4 gap-y-4 mt-5'>
-                {texts.map((text) => (
+                {filteredTexts.map((text) => (
                     <div key={text._id} className='w-[470px] h-[250px] bg-[#f5f5f5] rounded-xl shadow-xl p-4 relative pb-[70px]'>
                         <div className='flex absolute gap-3 bottom-4 right-4'>
                             <button
