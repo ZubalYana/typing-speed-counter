@@ -347,17 +347,25 @@ export default function TypingTest() {
                 >
                 </div>
             </div>
-            <div className="w-[90%] flex items-center">
-                <div
+            <div className="w-[90%] flex items-center justify-between mt-2">
+                <div className="w-[300px]"></div>
+                <Button
                     role="button"
                     tabIndex={0}
                     onClick={resetTest}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') resetTest(); }}
-                    style={{ cursor: 'pointer' }}
+                    style={{
+                        cursor: 'pointer',
+                        backgroundColor: '#10b981',
+                        color: '#f5f5f5',
+                        padding: '10px 20px 10px 20px',
+                        borderRadius: '10px',
+                    }}
                 >
-                    <RestartAltIcon className={isRotating ? "rotate-once" : ""} sx={{ fontSize: 28 }} />
-                </div>
-
+                    <RestartAltIcon className={isRotating ? "rotate-once" : ""} sx={{ fontSize: 28, marginRight: 0.5 }} />
+                    <p className="text-[18px] font-medium">Reset Text</p>
+                </Button>
+                <div className="w-[300px]"></div>
             </div>
 
             <ResultModal
