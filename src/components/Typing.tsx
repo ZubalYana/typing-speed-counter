@@ -244,6 +244,11 @@ export default function TypingTest() {
         }
     };
 
+    useEffect(() => {
+        fetchText(testingLanguage);
+    }, [testingDifficulty, testingLanguage]);
+
+
     const correctChars = userInput.length;
     const totalAttempts = correctChars + mistakes;
     const accuracy = totalAttempts > 0 ? (correctChars / totalAttempts) * 100 : 100;
