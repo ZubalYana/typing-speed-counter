@@ -57,6 +57,15 @@ export default function CreateText({ open, onClose, onSave }: CreateTextProps) {
         onClose();
     };
 
+    useEffect(() => {
+        if (!open) {
+            setText("");
+            setLanguage("English");
+            setDifficultyLevel("Easy");
+        }
+    }, [open]);
+
+
     return (
         <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
             <div className="p-4">
