@@ -25,11 +25,14 @@ export default function TypingTest() {
         return localStorage.getItem("typingLanguage") || "English";
     });
     const testingLanguagesOptions = ['English', 'Ukrainian']
+    const [testingDifficulty, setTestingDifficulty] = useState<string>(() => {
+        return localStorage.getItem("testingDifficulty") || "Easy";
+    });
+    const testingDifficultyOptions = ['Easy', 'Medium', 'Hard', 'Any']
     const [duration, setDuration] = useState<number>(() => {
         const stored = localStorage.getItem("typingDuration")
         return stored ? Number(stored) : 30
     })
-
     const [isRotating, setIsRotating] = useState<boolean>(false);
     const [showResultsModal, setShowResultsModal] = useState<boolean>(false);
 
@@ -42,8 +45,15 @@ export default function TypingTest() {
         Ukrainian: "ua",
     };
 
-    const fetchText = (language: string) => {
-        axios.get("http://localhost:5000/random-text", { params: { lang: language } }).then((res) => {
+    const fetchText = async (language: string) => {
+        try {
+            const res = await axios.get("http://localhost:5000/random-text", {
+                params: {
+                    lang: language,
+                    difficultyLevel: testingDifficulty
+                }
+            });
+
             setText(res.data.text);
             setUserInput("");
             setMistakes(0);
@@ -51,12 +61,16 @@ export default function TypingTest() {
             setIsFinished(false);
             setFirstErrorIndex(null);
             setTimeElapsed(0);
+
             if (timerRef.current) {
                 clearInterval(timerRef.current);
                 timerRef.current = null;
             }
-        });
+        } catch (err) {
+            console.error("Failed to fetch text:", err);
+        }
     };
+
 
     useEffect(() => {
         fetchText(testingLanguage);
@@ -160,6 +174,12 @@ export default function TypingTest() {
         const lang = event.target.value;
         setTestingLanguage(lang);
         localStorage.setItem("typingLanguage", lang);
+    };
+    const handleDifficultyChange = (event: SelectChangeEvent) => {
+        const diff = event.target.value;
+        setTestingDifficulty(diff);
+        localStorage.setItem("testingDifficulty", diff);
+        fetchText(testingLanguage);
     };
     const handleKey = (e: KeyboardEvent<HTMLDivElement>) => {
         if (isFinished) return;
@@ -347,8 +367,34 @@ export default function TypingTest() {
                 >
                 </div>
             </div>
-            <div className="w-[90%] flex items-center justify-between mt-2">
-                <div className="w-[300px]"></div>
+            <div className="w-[90%] flex items-center justify-between">
+                <div className="w-[300px] flex items-center mt-[-35px]">
+                    <h5>Difficulty:</h5>
+                    <Select
+                        value={testingDifficulty}
+                        onChange={handleDifficultyChange}
+                        variant="outlined"
+                        sx={{
+                            border: 'none',
+                            boxShadow: 'none',
+                            '& fieldset': { border: 'none' },
+                            left: '-5px',
+                        }}
+                    >
+                        {testingDifficultyOptions.map((difficulty) => (
+                            <MenuItem
+                                key={difficulty}
+                                value={difficulty}
+                                sx={{ textDecoration: 'none' }}
+                            >
+                                <div className='flex items-center font-semibold'>
+                                    <div className={`w-[15px] h-[15px] rounded-full mr-1 ${difficulty == 'Easy' ? 'bg-green-600' : ""} ${difficulty == 'Medium' ? 'bg-amber-600' : ""} ${difficulty == 'Hard' ? 'bg-red-600' : ""} ${difficulty == 'Any' ? 'bg-blue-600' : ""}`}></div>
+                                    {difficulty}
+                                </div>
+                            </MenuItem>
+                        ))}
+                    </Select>
+                </div>
                 <Button
                     role="button"
                     tabIndex={0}
@@ -360,6 +406,7 @@ export default function TypingTest() {
                         color: '#f5f5f5',
                         padding: '10px 20px 10px 20px',
                         borderRadius: '10px',
+                        marginTop: '10px',
                     }}
                 >
                     <RestartAltIcon className={isRotating ? "rotate-once" : ""} sx={{ fontSize: 28, marginRight: 0.5 }} />
