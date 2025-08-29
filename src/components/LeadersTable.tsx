@@ -41,27 +41,30 @@ export default function LeadersTable() {
         <div className="p-8 pt-0 w-full flex flex-col items-center text-[#333]">
             <h5 className="text-[28px] font-semibold mb-5">Leaders Table</h5>
             <div className="w-[80%]">
-                <div className="w-full grid grid-cols-6 gap-6 p-3 bg-gray-300 rounded-lg font-semibold text-sm">
-                    <p>Place</p>
-                    <p>Name</p>
-                    <p>Email</p>
-                    <p>CPM</p>
-                    <p>WPM</p>
-                    <p>Accuracy</p>
+                <div className="flex w-full p-3 bg-gray-300 rounded-lg font-semibold text-sm">
+                    <p className="w-[100px]">Place</p>
+                    <p className="w-[200px]">Name</p>
+                    <p className="flex-1">Email</p>
+                    <p className="w-[120px]">CPM</p>
+                    <p className="w-[120px]">WPM</p>
+                    <p className="w-[100px]">Accuracy</p>
                 </div>
 
                 {typingTests.map((test, index) => (
                     <div
                         key={test._id}
-                        className="w-full grid grid-cols-6 gap-6 p-3 border-b border-gray-200"
+                        className="flex w-full p-3 border-b border-gray-200"
                     >
-
-                        <p>{index + 1}</p>
-                        <p>{typeof test.user === 'object' ? test.user.name : 'Unknown'}</p>
-                        <p>{typeof test.user === 'object' ? test.user.email : '-'}</p>
-                        <p>{test.cpm}</p>
-                        <p>{test.wpm}</p>
-                        <p>{test.accuracy.toFixed(2)}%</p>
+                        <p className="w-[100px]">{index + 1}</p>
+                        <p className="w-[200px]">
+                            {typeof test.user === 'object' ? test.user.name : 'Unknown'}
+                        </p>
+                        <p className="flex-1 truncate">
+                            {typeof test.user === 'object' ? test.user.email : '-'}
+                        </p>
+                        <p className="w-[120px]">{test.cpm}</p>
+                        <p className="w-[120px]">{test.wpm}</p>
+                        <p className="w-[100px]">{test.accuracy.toFixed(2)}%</p>
                     </div>
                 ))}
             </div>

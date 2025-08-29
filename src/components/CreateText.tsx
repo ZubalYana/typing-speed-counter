@@ -25,7 +25,8 @@ export default function CreateText({ open, onClose, onSave }: CreateTextProps) {
     const [difficultyLevel, setDifficultyLevel] = useState("Easy");
 
     const calculateDifficulty = (str: string) => {
-        if (!str) return "Easy";
+        if (!str) return "Text required";
+        if (str.length < 600) return "Text's too short ( min. 600 chars )";
 
         const length = str.length;
         const upperRatio = (str.match(/[A-ZА-Я]/g) || []).length / length;
@@ -34,11 +35,11 @@ export default function CreateText({ open, onClose, onSave }: CreateTextProps) {
 
         const score = (upperRatio * 1) + (numberRatio * 2) + (symbolRatio * 3);
 
-        if (length < 600) return "Too Short";
         if (score < 0.10) return "Easy";
         if (score < 0.17) return "Medium";
         return "Hard";
     };
+
 
     useEffect(() => {
         setDifficultyLevel(calculateDifficulty(text));
@@ -101,9 +102,10 @@ export default function CreateText({ open, onClose, onSave }: CreateTextProps) {
                                     ? "bg-amber-600"
                                     : difficultyLevel === "Hard"
                                         ? "bg-red-600"
-                                        : "bg-gray-500"
+                                        : "bg-gray-400"
                                 }`}
-                        ></div>
+                        />
+
                         <span className="font-semibold">{difficultyLevel}</span>
                     </div>
                 </div>
