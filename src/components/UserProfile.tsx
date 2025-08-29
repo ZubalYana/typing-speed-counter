@@ -5,6 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import DonutStat from './DonutStat';
 import { Button } from '@mui/material';
 import { Dialog } from '@mui/material';
+import UserTestTable from './UserTestTable';
 export default function UserProfile() {
     type User = {
         name: String;
@@ -119,6 +120,7 @@ export default function UserProfile() {
                     <h2 className='text-[16px]'>{user?.email}</h2>
                 </div>
             </div>
+            <UserTestTable />
             <h5 className="text-[24px] font-semibold mb-5 mt-10">
                 Your typing speed statistics:
             </h5>
