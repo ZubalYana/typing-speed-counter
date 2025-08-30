@@ -13,6 +13,7 @@ type TypingTest = {
     cpm: number;
     wpm: number;
     accuracy: number;
+    difficultyLevel: string;
 };
 
 type TypingTestsResponse = {
@@ -23,19 +24,16 @@ export default function LeadersTable() {
     const [typingTests, setTypingTests] = useState<TypingTest[]>([]);
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
-
-        axios.get<TypingTestsResponse>('http://localhost:5000/typing-tests', {
-            headers: { Authorization: `Bearer ${token}` }
-        })
+        axios.get<TypingTestsResponse>('http://localhost:5000/typing-tests/leaders')
             .then((res) => {
-                console.log(res.data);
-                setTypingTests(res.data.tests || []);
+                const sorted = (res.data.tests || []).sort((a, b) => b.cpm - a.cpm);
+                setTypingTests(sorted);
             })
             .catch((err) => {
-                console.error('Failed to fetch typing tests data:', err);
+                console.error('Failed to fetch leaders data:', err);
             });
     }, []);
+
 
     return (
         <div className="p-8 pt-0 w-full flex flex-col items-center text-[#333]">
@@ -45,6 +43,7 @@ export default function LeadersTable() {
                     <p className="w-[100px]">Place</p>
                     <p className="w-[200px]">Name</p>
                     <p className="flex-1">Email</p>
+                    <p className="w-[150px]">Difficulty</p>
                     <p className="w-[120px]">CPM</p>
                     <p className="w-[120px]">WPM</p>
                     <p className="w-[100px]">Accuracy</p>
@@ -62,6 +61,7 @@ export default function LeadersTable() {
                         <p className="flex-1 truncate">
                             {typeof test.user === 'object' ? test.user.email : '-'}
                         </p>
+                        <p className="w-[150px]">{test.difficultyLevel}</p>
                         <p className="w-[120px]">{test.cpm}</p>
                         <p className="w-[120px]">{test.wpm}</p>
                         <p className="w-[100px]">{test.accuracy.toFixed(2)}%</p>
