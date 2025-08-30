@@ -111,6 +111,7 @@ export default function TypingTest() {
                             cpm,
                             accuracy,
                             mistakes,
+                            difficultyLevel: testingDifficulty,
                             textLanguage: testingLanguage,
                             duration,
                             timeElapsed,
