@@ -33,17 +33,17 @@ export default function UserTestTable() {
     }, [])
 
     return (
-        <div className="py-8 w-[55%] flex flex-col items-center text-[#333]">
+        <div className="py-8 w-full flex flex-col items-center text-[#333]">
             <h5 className="text-[24px] font-semibold mb-5">My Test History</h5>
-            <div className="w-[100%]">
+            <div className="w-full">
                 <div className="flex w-full p-3 bg-gray-300 rounded-lg font-semibold text-sm">
-                    <p className="w-[130px]">Date</p>
-                    <p className="w-[140px]">Language</p>
-                    <p className='w-[150px]'>Difficulty</p>
-                    <p className="w-[90px]">WPM</p>
-                    <p className="w-[90px]">CPM</p>
-                    <p className="w-[110px]">Accuracy</p>
-                    <p className="w-[90px]">Mistakes</p>
+                    <p className="flex-1">Date</p>
+                    <p className="flex-1">Language</p>
+                    <p className="flex-1">Difficulty</p>
+                    <p className="flex-1">WPM</p>
+                    <p className="flex-1">CPM</p>
+                    <p className="flex-1">Accuracy</p>
+                    <p className="flex-1">Mistakes</p>
                 </div>
 
                 {tests.map((test) => (
@@ -51,18 +51,19 @@ export default function UserTestTable() {
                         key={test._id}
                         className="flex w-full p-3 border-b border-gray-200"
                     >
-                        <p className="w-[130px]">
+                        <p className="flex-1">
                             {new Date(test.createdAt).toLocaleDateString()}
                         </p>
-                        <p className="w-[140px]">{test.textLanguage}</p>
-                        <p className='w-[150px]'>{test.difficultyLevel}</p>
-                        <p className="w-[90px]">{test.wpm}</p>
-                        <p className="w-[90px]">{test.cpm}</p>
-                        <p className="w-[110px]">{test.accuracy.toFixed(2)}%</p>
-                        <p className="w-[90px]">{test.mistakes}</p>
+                        <p className="flex-1">{test.textLanguage}</p>
+                        <p className="flex-1">{test.difficultyLevel}</p>
+                        <p className="flex-1">{test.wpm}</p>
+                        <p className="flex-1">{test.cpm}</p>
+                        <p className="flex-1">{test.accuracy.toFixed(2)}%</p>
+                        <p className="flex-1">{test.mistakes}</p>
                     </div>
                 ))}
             </div>
         </div>
+
     );
 }
