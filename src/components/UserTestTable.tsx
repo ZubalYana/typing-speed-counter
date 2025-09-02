@@ -49,7 +49,7 @@ export default function UserTestTable() {
                 {tests.map((test) => (
                     <div
                         key={test._id}
-                        className="flex w-full p-3 border-b border-gray-200"
+                        className="flex w-full p-3 border-b border-gray-200 max-h-[500px] overflow-y-auto"
                     >
                         <p className="flex-1">
                             {new Date(test.createdAt).toLocaleDateString()}
