@@ -12,6 +12,7 @@ import ButtonGroup from "@mui/material/ButtonGroup";
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import ResultModal from "./ResultModal";
 import { Clock } from "lucide-react";
+import CertificateModal from "./CertificateModal";
 
 export default function TypingTest() {
     const [text, setText] = useState<string>("");
@@ -44,6 +45,8 @@ export default function TypingTest() {
         English: "us",
         Ukrainian: "ua",
     };
+    const [earnedCertificate, setEarnedCertificate] = useState<any>(null);
+    const [showCertificateModal, setShowCertificateModal] = useState(false);
 
     const fetchText = async (language: string) => {
         try {
@@ -70,7 +73,6 @@ export default function TypingTest() {
             console.error("Failed to fetch text:", err);
         }
     };
-
 
     useEffect(() => {
         fetchText(testingLanguage);
@@ -104,7 +106,7 @@ export default function TypingTest() {
             const saveTestResult = async () => {
                 const token = localStorage.getItem("token")
                 try {
-                    await axios.post(
+                    const res = await axios.post(
                         'http://localhost:5000/typing-tests',
                         {
                             wpm,
@@ -122,6 +124,13 @@ export default function TypingTest() {
                             },
                         }
                     );
+
+                    if (res.data.certificate) {
+                        setEarnedCertificate(res.data.certificate);
+                        setShowCertificateModal(true);
+                    }
+
+
                 } catch (error) {
                     console.error("Failed to save the test result:", error)
                 }
@@ -429,6 +438,11 @@ export default function TypingTest() {
                 accuracy={accuracy}
                 mistakes={mistakes}
                 timeElapsed={timeElapsed}
+            />
+            <CertificateModal
+                open={showCertificateModal}
+                onClose={() => setShowCertificateModal(false)}
+                certificate={earnedCertificate}
             />
 
         </div>
