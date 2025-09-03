@@ -127,7 +127,6 @@ export default function TypingTest() {
 
                     if (res.data.certificate) {
                         setEarnedCertificate(res.data.certificate);
-                        setShowCertificateModal(true);
                     }
 
 
@@ -432,7 +431,13 @@ export default function TypingTest() {
 
             <ResultModal
                 open={showResultsModal}
-                onClose={() => setShowResultsModal(false)}
+                onClose={() => {
+                    setShowResultsModal(false);
+
+                    if (earnedCertificate) {
+                        setShowCertificateModal(true);
+                    }
+                }}
                 wpm={wpm}
                 cpm={cpm}
                 accuracy={accuracy}

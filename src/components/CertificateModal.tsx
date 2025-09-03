@@ -1,4 +1,4 @@
-import { Modal, Button } from "@mui/material";
+import { Button } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CertificateModal({ open, onClose, certificate }: any) {
