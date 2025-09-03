@@ -115,7 +115,7 @@ export default function TypingTest() {
                             mistakes,
                             difficultyLevel: testingDifficulty,
                             textLanguage: testingLanguage,
-                            duration,
+                            durationSec: duration,
                             timeElapsed,
                         },
                         {

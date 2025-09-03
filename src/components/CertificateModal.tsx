@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function CertificateModal({ open, onClose, certificate }: any) {
     if (!certificate) return null;
 
+    if (certificate) {
+        console.log(certificate);
+    }
+
     return (
         <AnimatePresence>
             {open && (
@@ -35,6 +39,11 @@ export default function CertificateModal({ open, onClose, certificate }: any) {
                             <p>Accuracy: {certificate.accuracy.toFixed(2)}%</p>
                             <p>Issued at: {new Date(certificate.issuedAt).toLocaleDateString()}</p>
                             <p>Validation ID: {certificate.validationId}</p>
+                            <p>Time: {certificate.time}</p>
+                            <p>User name: {certificate.userName}</p>
+                            <p>Mistakes: {certificate.mistakes}</p>
+                            <p>Difficulty: {certificate.difficultyLevel}</p>
+                            <p>Language: {certificate.language}</p>
 
                             <Button
                                 variant="contained"
