@@ -6,6 +6,7 @@ import DonutStat from './DonutStat';
 import { Button } from '@mui/material';
 import { Dialog } from '@mui/material';
 import UserTestTable from './UserTestTable';
+import EmptyProfile from './EmptyProfile';
 export default function UserProfile() {
     type User = {
         name: String;
@@ -120,30 +121,14 @@ export default function UserProfile() {
                     <h2 className='text-[16px]'>{user?.email}</h2>
                 </div>
             </div>
-            <UserTestTable />
-            <h5 className="text-[24px] font-semibold mb-5 mt-10">
-                Your typing speed statistics:
-            </h5>
-            <div style={{ width: '100%', height: 300 }}>
-                <ResponsiveContainer>
-                    <LineChart data={cpmData}>
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="date" />
-                        <YAxis />
-                        <Tooltip />
-                        <Line
-                            type="monotone"
-                            dataKey="cpm"
-                            stroke="#10B981"
-                            strokeWidth={2}
-                            name="CPM"
-                        />
-                    </LineChart>
-                </ResponsiveContainer>
-            </div>
-            <div className='w-full flex justify-between'>
-                <div className='w-[45%]'>
-                    <h4 className="text-lg font-semibold mt-8 mb-2">Mistakes per attempt</h4>
+            {cpmData.length === 0 ? (
+                <EmptyProfile />
+            ) : (
+                <>
+                    <UserTestTable />
+                    <h5 className="text-[24px] font-semibold mb-5 mt-10">
+                        Your typing speed statistics:
+                    </h5>
                     <div style={{ width: '100%', height: 300 }}>
                         <ResponsiveContainer>
                             <LineChart data={cpmData}>
@@ -153,41 +138,64 @@ export default function UserProfile() {
                                 <Tooltip />
                                 <Line
                                     type="monotone"
-                                    dataKey="mistakes"
-                                    stroke="#e74242"
+                                    dataKey="cpm"
+                                    stroke="#10B981"
                                     strokeWidth={2}
-                                    name="Mistakes"
+                                    name="CPM"
                                 />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
-                </div>
+                    <div className='w-full flex justify-between'>
+                        <div className='w-[45%]'>
+                            <h4 className="text-lg font-semibold mt-8 mb-2">Mistakes per attempt</h4>
+                            <div style={{ width: '100%', height: 300 }}>
+                                <ResponsiveContainer>
+                                    <LineChart data={cpmData}>
+                                        <CartesianGrid strokeDasharray="3 3" />
+                                        <XAxis dataKey="date" />
+                                        <YAxis />
+                                        <Tooltip />
+                                        <Line
+                                            type="monotone"
+                                            dataKey="mistakes"
+                                            stroke="#e74242"
+                                            strokeWidth={2}
+                                            name="Mistakes"
+                                        />
+                                    </LineChart>
+                                </ResponsiveContainer>
+                            </div>
+                        </div>
 
-                <div className='w-[45%] flex justify-center items-center'>
-                    <div className="w-full flex justify-center gap-25 relative">
-                        <DonutStat value={Number(summary.avgAccuracy.toFixed(1))} label="Avg Accuracy" unit="%" color="#10B981" />
-                        <DonutStat value={avgMistakes} label="Avg Mistakes" color="#f87171" />
+                        <div className='w-[45%] flex justify-center items-center'>
+                            <div className="w-full flex justify-center gap-25 relative">
+                                <DonutStat value={Number(summary.avgAccuracy.toFixed(1))} label="Avg Accuracy" unit="%" color="#10B981" />
+                                <DonutStat value={avgMistakes} label="Avg Mistakes" color="#f87171" />
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div className='mt-18'>
-                <Button
-                    type="submit"
-                    variant="outlined"
-                    color="primary"
-                    sx={{
-                        borderColor: '#e74242',
-                        width: '200px',
-                        color: '#e74242',
-                        borderWidth: '2px',
-                        height: '45px'
-                    }}
-                    onClick={() => setOpenLogoutConfirm(true)}
-                >
-                    <LogOut size={17} className='mr-2' />
-                    Log out
-                </Button>
-            </div>
+                    <div className='mt-18'>
+                        <Button
+                            type="submit"
+                            variant="outlined"
+                            color="primary"
+                            sx={{
+                                borderColor: '#e74242',
+                                width: '200px',
+                                color: '#e74242',
+                                borderWidth: '2px',
+                                height: '45px'
+                            }}
+                            onClick={() => setOpenLogoutConfirm(true)}
+                        >
+                            <LogOut size={17} className='mr-2' />
+                            Log out
+                        </Button>
+                    </div>
+                </>
+            )}
+
             <Dialog
                 open={openLogoutConfirm}
                 onClose={() => setOpenLogoutConfirm(false)}
