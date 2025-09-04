@@ -35,8 +35,10 @@ export default function UserTestTable() {
     return (
         <div className="py-8 w-full flex flex-col items-center text-[#333]">
             <h5 className="text-[24px] font-semibold mb-5">My Test History</h5>
-            <div className="w-full">
-                <div className="flex w-full p-3 bg-gray-300 rounded-lg font-semibold text-sm">
+
+            <div className="w-full max-h-[400px] overflow-y-auto rounded-lg border border-gray-200 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200">
+
+                <div className="flex w-full p-3 bg-gray-300 font-semibold text-sm sticky top-0 z-10">
                     <p className="flex-1">Date</p>
                     <p className="flex-1">Language</p>
                     <p className="flex-1">Difficulty</p>
@@ -47,13 +49,8 @@ export default function UserTestTable() {
                 </div>
 
                 {tests.map((test) => (
-                    <div
-                        key={test._id}
-                        className="flex w-full p-3 border-b border-gray-200 max-h-[500px] overflow-y-auto"
-                    >
-                        <p className="flex-1">
-                            {new Date(test.createdAt).toLocaleDateString()}
-                        </p>
+                    <div key={test._id} className="flex w-full p-3 border-b border-gray-200">
+                        <p className="flex-1">{new Date(test.createdAt).toLocaleDateString()}</p>
                         <p className="flex-1">{test.textLanguage}</p>
                         <p className="flex-1">{test.difficultyLevel}</p>
                         <p className="flex-1">{test.wpm}</p>
@@ -64,6 +61,6 @@ export default function UserTestTable() {
                 ))}
             </div>
         </div>
-
     );
+
 }
