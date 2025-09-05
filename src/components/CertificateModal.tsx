@@ -1,11 +1,30 @@
 import { Button } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
+import lvl1Cerificate from '/LVL 1 Certificate layout.png';
+import lvl2Cerificate from '/LVL 2 Certificate layout.png';
+import lvl3Cerificate from '/LVL 3 Certificate layout.png';
 
 export default function CertificateModal({ open, onClose, certificate }: any) {
     if (!certificate) return null;
 
     if (certificate) {
         console.log(certificate);
+    }
+
+    let certificateImage;
+
+    switch (certificate.difficultyLevel) {
+        case 'Level 1':
+            certificateImage = lvl1Cerificate;
+            break;
+        case 'Level 2':
+            certificateImage = lvl2Cerificate;
+            break;
+        case 'Level 3':
+            certificateImage = lvl3Cerificate;
+            break;
+        default:
+            certificateImage = lvl1Cerificate;
     }
 
     return (
@@ -32,9 +51,14 @@ export default function CertificateModal({ open, onClose, certificate }: any) {
                         className="fixed inset-0 z-50 flex items-center justify-center p-4"
                     >
                         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white rounded-2xl p-4 text-center">
-                            <h3>
-                                🎉 New Certificate Earned!
-                            </h3>
+                            <h3>🎉 New Certificate Earned!</h3>
+
+                            <img
+                                src={certificateImage}
+                                alt={`Certificate ${certificate.difficultyLevel}`}
+                                className="w-full rounded-xl mt-4"
+                            />
+
                             <p>CPM: {certificate.cpm}</p>
                             <p>Accuracy: {certificate.accuracy.toFixed(2)}%</p>
                             <p>Issued at: {new Date(certificate.issuedAt).toLocaleDateString()}</p>
@@ -54,6 +78,7 @@ export default function CertificateModal({ open, onClose, certificate }: any) {
                                 Close
                             </Button>
                         </div>
+
                     </motion.div>
                 </>
             )}
