@@ -11,8 +11,17 @@ export default function CertificateModal({ open, onClose, certificate }: any) {
         console.log(certificate);
     }
 
-    let certificateImage;
+    const certificateTimeFormatting = (time: number) => {
+        if (time == 90) {
+            return { number: 1.5, unit: 'min' }
+        } else if (time == 60) {
+            return { number: 1, unit: 'min' }
+        } else if (time == 30) {
+            return { number: 30, unit: 'sec' }
+        }
+    }
 
+    let certificateImage;
     switch (certificate.difficultyLevel) {
         case 'Level 1':
             certificateImage = lvl1Cerificate;
@@ -52,23 +61,23 @@ export default function CertificateModal({ open, onClose, certificate }: any) {
                     >
                         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[400px] bg-white rounded-2xl p-4 text-center">
                             <h3>🎉 New Certificate Earned!</h3>
+                            <div className="w-full relative">
+                                <img
+                                    src={certificateImage}
+                                    alt={`Certificate ${certificate.difficultyLevel}`}
+                                    className="w-full rounded-xl mt-4 "
+                                />
 
-                            <img
-                                src={certificateImage}
-                                alt={`Certificate ${certificate.difficultyLevel}`}
-                                className="w-full rounded-xl mt-4"
-                            />
-
-                            <p>CPM: {certificate.cpm}</p>
-                            <p>Accuracy: {certificate.accuracy.toFixed(2)}%</p>
-                            <p>Issued at: {new Date(certificate.issuedAt).toLocaleDateString()}</p>
-                            <p>Validation ID: {certificate.validationId}</p>
-                            <p>Time: {certificate.time}</p>
-                            <p>User name: {certificate.userName}</p>
-                            <p>Mistakes: {certificate.mistakes}</p>
-                            <p>Difficulty: {certificate.difficultyLevel}</p>
-                            <p>Language: {certificate.language}</p>
-
+                                <p className="absolute top-[145px] left-[50px] text-[14px] font-bold">{certificate.cpm}<span className="text-[10px]">c/m</span></p>
+                                <p className="absolute top-[145px] left-[128px] text-[14px] font-bold">{certificate.accuracy.toFixed(1)}<span className="text-[10px]">%</span></p>
+                                <p>Time: {certificate.time}</p>
+                                <p>Issued at: {new Date(certificate.issuedAt).toLocaleDateString()}</p>
+                                <p>Validation ID: {certificate.validationId}</p>
+                                <p>User name: {certificate.userName}</p>
+                                <p>Mistakes: {certificate.mistakes}</p>
+                                <p>Difficulty: {certificate.difficultyLevel}</p>
+                                <p>Language: {certificate.language}</p>
+                            </div>
                             <Button
                                 variant="contained"
                                 color="success"
